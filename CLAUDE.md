@@ -12,6 +12,7 @@ Leer antes de tocar nada:
 - `Docs/DESIGN.md` — guía visual. Fuente de verdad para colores, tipografía, componentes y textos.
 - `Docs/plan.md` — plan por fases y **decisiones que corrigen o precisan** los dos documentos anteriores.
 - `Docs/bitacora.md` — qué se ha hecho, sesión a sesión.
+- Decks: español https://claude.ai/artifact/A2yh3kR5CXYvoy3ukjdns2 · inglés (el de la presentación) https://claude.ai/artifact/7EiiRaCynzj3eAEGE9oFNj
 - `Docs/guion-demo.md` — guion de la demo, preparación y plan B. `Docs/pruebas-manuales.md` — lista de pruebas manuales.
 
 ## Stack

@@ -158,3 +158,4 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 - Licencia **MIT** (`LICENSE`, © 2026 Heavy Duty Builders), aprobada por Renato.
 - **Ensayo real en producción** del registro desde la web (la única ruta que solo se había probado en local): Hacienda 1,2 s, Solana 2 s, pantalla final correcta y el mismo enlace de ejemplo (sal fija confirmada también en producción). Septiembre devuelto a María después.
 - **Prueba de teclado** (N5) en producción: en verde.
+- **Deck en inglés** (copia aparte, 13 diapositivas, paleta y tipografías de DESIGN.md): https://claude.ai/artifact/7EiiRaCynzj3eAEGE9oFNj. Añade «Trust levels», «Privacy by design» y «Live today on devnet» (cifras medidas en producción). El deck en español queda como estaba (versión 6).
