@@ -6,11 +6,12 @@ Web: https://peoples-protocol.vercel.app/en
 
 ## Preparación
 
-**El día antes**
+**Estado normal de la web (todos los días hasta la demo).** María (`EspsKBKUwGkvTUUTzNDciHBV5PbfQ52azw3mms2hTTKq`, cuenta «María (demo)» del Phantom de Renato) tiene 12 meses: septiembre de 2024 con factura de la AEAT y de octubre de 2024 a agosto de 2025 afirmados por la agencia. Así cualquiera que visite la web, jueces incluidos, ve el historial completo.
 
-- [ ] En Phantom (Chrome), la cuenta **«María (demo)»** existe y su dirección es `DEMO_HOLDER` de `src/protocol/config.ts`.
-- [ ] Claude (o quien tenga el repositorio) ejecuta `npm run demo:prepare -- --holder <wallet de María> --yes`. Publica los 11 meses afirmados por la agencia, retira la prueba de ejemplo para registrarla en directo y comprueba Hacienda y el saldo.
-- [ ] Ensayo completo una vez. Si se ensaya registrando, volver a ejecutar `demo:prepare` después (la retira otra vez).
+**Justo antes de presentar (máximo 1 hora antes)**
+
+- [ ] Ejecutar `npm run demo:prepare -- --holder EspsKBKUwGkvTUUTzNDciHBV5PbfQ52azw3mms2hTTKq --yes`. Retira la prueba de septiembre para registrarla en directo (María se queda con 11 meses) y comprueba Hacienda y el saldo. Lo puede lanzar Claude.
+- [ ] Ensayo previo, días antes: igual, y al terminar el ensayo no hay que hacer nada (el registro del ensayo deja la web como estaba).
 
 **30 minutos antes**
 
@@ -62,7 +63,8 @@ Abrir *Technical details* y, si hay tiempo, *View on Solana Explorer*.
 | --- | --- |
 | Hacienda no responde (paso 2) | Saltar al certificado de ejemplo del inicio (*Open this certificate*) y al historial: no dependen de Hacienda. Explicar que la consulta es en directo al servicio público. |
 | «This invoice was already registered» en el paso 2 | No se ejecutó `demo:prepare`. Aprovecharlo como demostración del antiduplicado y seguir con *Open the existing proof*. |
-| Se registró sin la wallet de María | El historial de María tendrá 11 meses. Contarlo tal cual; después, restaurar con `demo:prepare` + `demo:attest -- --holder <María>`. |
+| Se registró sin la wallet de María | El historial de María tendrá 11 meses. Contarlo tal cual; después: `npm run withdraw -- example --yes` y `npm run demo:attest -- --holder EspsKBKUwGkvTUUTzNDciHBV5PbfQ52azw3mms2hTTKq`. |
+| Al final no se hace la demo en directo | `npm run demo:attest -- --holder EspsKBKUwGkvTUUTzNDciHBV5PbfQ52azw3mms2hTTKq` devuelve septiembre a María (mismo enlace). |
 | Solana tarda más de 30 s | Esperar con la pantalla de «Registering…»; si no, pasar al vídeo de respaldo. |
 | Sin conexión | Vídeo de respaldo. |
 

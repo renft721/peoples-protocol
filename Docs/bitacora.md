@@ -139,3 +139,16 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 - Wallet «María (demo)» en el Phantom de Renato. Con su dirección: `DEMO_HOLDER` nuevo, `demo:prepare`, y retirar los 11 meses de la titular ficticia actual (`8ZaN…LKCi`) para dejar limpio.
 - Deck: alinear con el documento corregido.
 - Fase 4: vídeo, README del SDK, envío.
+
+## 1 de octubre de 2026 — Fase 4: María (demo), deck y README
+
+**Hecho.**
+
+- **María (demo)**: cuenta de Phantom de Renato, `EspsKBKUwGkvTUUTzNDciHBV5PbfQ52azw3mms2hTTKq` (`DEMO_HOLDER`). Tiene 11 meses afirmados por la agencia (oct 2024 – ago 2025) y septiembre de 2024 con la factura de la AEAT (la prueba de ejemplo `HmD3…9hwM`, mismo enlace de siempre). Retiradas las 11 pruebas de la titular ficticia anterior (`8ZaN…LKCi`).
+- **Estado normal de la web**: María con 12 meses. `demo:prepare` solo se ejecuta justo antes de presentar (retira septiembre para registrarlo en directo). Guion actualizado.
+- `npm run withdraw -- --holder <wallet> --yes`: retira todas las pruebas de una wallet.
+- **Deck** (https://claude.ai/artifact/A2yh3kR5CXYvoy3ukjdns2, versión 6): corregidas «Cómo funciona» (sin Anchor, VeriFactu ahora y zkTLS próximamente), «Por qué blockchain» (retirada visible), «El piloto» (componentes reales, datos ficticios pero comprobables), «Fase 2» (+ zkTLS/Open Banking y emisores con KYC), «Arquitectura» (cajas y stack) y «Cierre» (web y repositorio). Sigue en español.
+- **`examples/verify-proof.ts`**: verificación independiente con `sas-lib` y `@solana/kit`, sin importar nada de la app (demuestra que cualquiera puede integrarlo). Probado con la prueba de ejemplo (huella ✔) y con un mes del emisor.
+- **README en inglés** para los jueces: problema, capas, cómo se hace una prueba, niveles de confianza, privacidad, direcciones del protocolo, esquema, API, ejecución local, limitaciones.
+
+**Pendiente (Renato).** Vídeo de la demo, licencia del repositorio y envío a Colosseum antes del 12 de octubre. Opcional: versión del deck en inglés.

@@ -29,8 +29,7 @@ export const SCHEMA_DESCRIPTION =
 
 /**
  * Prueba de ejemplo (factura de ejemplo de la AEAT, NIF de pruebas 89890001K, 241,40 €),
- * registrada el 01-10-2026 con `npm run demo:attest -- --holder <titular>` y ligada a la wallet
- * de una titular ficticia (DEMO_HOLDER), para que su historial tenga contenido.
+ * ligada a la wallet de «María (demo)» (DEMO_HOLDER): es el mes de septiembre de 2024 de su historial.
  * La evidencia incluye la sal: son datos ficticios y públicos a propósito, para que
  * cualquiera pueda abrir el certificado completo. La sal se deriva de la clave del emisor
  * (invoiceSalt), así que retirar y volver a registrar la factura da la misma evidencia:
@@ -43,8 +42,11 @@ export const EXAMPLE_PROOF = {
   amount: "241.40",
 };
 
-/** Wallet de la titular ficticia de la demo. Nadie tiene su clave: solo identifica a la titular. */
-export const DEMO_HOLDER = "8ZaNpA6oyqQwtupMqse9Br37ZRrBdRcC6DaM2R1gLKCi";
+/**
+ * Wallet de «María (demo)», la inquilina ficticia: una cuenta de Phantom de Renato, para poder
+ * conectarla en la demo en directo. Tiene 12 meses de historial (01-10-2026).
+ */
+export const DEMO_HOLDER = "EspsKBKUwGkvTUUTzNDciHBV5PbfQ52azw3mms2hTTKq";
 
 /** QR de la factura de ejemplo que publica la AEAT (datos de prueba, responde «Encontrada»). */
 export const SAMPLE_QR =
