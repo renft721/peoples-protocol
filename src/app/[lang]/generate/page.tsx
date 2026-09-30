@@ -15,5 +15,5 @@ export default async function GeneratePage({ params }: PageProps<"/[lang]/genera
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
   const t = await getDictionary(lang);
-  return <GenerateWizard lang={lang} t={{ generate: t.generate, common: t.common }} />;
+  return <GenerateWizard lang={lang} t={{ generate: t.generate, common: t.common, history: t.history }} />;
 }

@@ -91,3 +91,17 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 - 390 px: inicio, generar y certificado sin desplazamiento horizontal; menú móvil con botón de wallet; sin wallet instalada aparece el aviso para instalar una.
 
 **Pendiente de probar (Renato).** Conectar una wallet real (Phantom u otra) en su navegador y registrar una prueba ligada a ella.
+
+## 1 de octubre de 2026 — Historial por titular (mejora de producto, decisión 10)
+
+**Hecho.**
+
+- `src/protocol/history.ts` + `GET /api/holders/[wallet]`: pide a Solana todas las atestaciones de nuestra credencial y esquema (filtro por posiciones fijas de la cuenta: tipo, credencial, esquema) y se queda con las que tienen esa wallet como `holder`. Comprobado en devnet: responde en ~0,15 s.
+- Pantallas `/[lang]/history` (formulario) y `/[lang]/history/[wallet]`: resumen («N pagos de alquiler confirmados por el emisor, de … a …», con aviso de que todos están respaldados por Hacienda), lista de pruebas con enlace a cada certificado (sin importe: el importe solo va en el enlace de cada prueba), estados vacío, dirección no válida y error de red.
+- Accesos: «Mi historial» junto a la wallet conectada; «Ver el historial de pagos del titular» en el certificado si la prueba tiene titular; «Ver tu historial de pagos» al terminar el asistente si había wallet; pista en «Comprobar».
+- `npm run demo:attest -- --holder <wallet>`: registra ligada a un titular.
+- Prueba de ejemplo retirada y registrada de nuevo, ligada a la **titular ficticia** `8ZaNpA6oyqQwtupMqse9Br37ZRrBdRcC6DaM2R1gLKCi` (`DEMO_HOLDER` en config.ts; nadie tiene su clave). Evidencia nueva en `EXAMPLE_PROOF`.
+
+**Limitación de datos (pendiente de decisión de Renato).** Con una sola factura de la AEAT que responda «Encontrada», el historial de ejemplo tiene 1 prueba. Opción propuesta: un tercer nivel de confianza, «afirmado por el emisor, sin comprobación de Hacienda». Encaja con el escenario 1 del documento (la agencia publica en lote) y permitiría enseñar un historial de 12 meses con niveles de confianza mezclados, siempre etiquetados.
+
+**Pruebas manuales hechas (local).** Certificado de ejemplo → «Ver el historial de pagos del titular» → historial con 1 prueba y resumen correcto. Wallet sin pruebas → estado vacío. Dirección no válida → aviso.

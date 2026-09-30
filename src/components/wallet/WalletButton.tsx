@@ -1,15 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 import { fill, shortAddress } from "@/lib/format";
 import { useWallet } from "./WalletProvider";
 import styles from "./WalletButton.module.css";
 
-type Props = { t: Dictionary["wallet"]; className?: string };
+type Props = { lang: Locale; t: Dictionary["wallet"]; historyLabel: string; className?: string };
 
 // Botón "Conectar wallet" de la barra superior (DESIGN.md §4): como el primario, 16 px y 44 px de alto.
-export function WalletButton({ t, className }: Props) {
+export function WalletButton({ lang, t, historyLabel, className }: Props) {
   const { status, address, error, wallets, connect, disconnect, clearError } = useWallet();
   const [chooserOpen, setChooserOpen] = useState(false);
   const [notFound, setNotFound] = useState(false);
@@ -20,6 +22,9 @@ export function WalletButton({ t, className }: Props) {
         <span className={styles.connected} title={address}>
           {fill(t.connectedAs, { address: shortAddress(address) })}
         </span>
+        <Link className={styles.disconnect} href={`/${lang}/history/${address}`}>
+          {historyLabel}
+        </Link>
         <button type="button" className={styles.disconnect} onClick={() => void disconnect()}>
           {t.disconnect}
         </button>

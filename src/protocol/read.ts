@@ -7,6 +7,7 @@ import {
   decodeAttestation,
   deserializeAttestationData,
   fetchSchema,
+  type Attestation,
   type Schema,
 } from "sas-lib";
 import { pilotAddresses } from "./addresses";
@@ -52,7 +53,7 @@ type RawData = {
   issued_at: bigint;
 };
 
-const ATTESTATION_DISCRIMINATOR = 2;
+export const ATTESTATION_DISCRIMINATOR = 2;
 
 let cachedSchema: Promise<Schema> | undefined;
 
@@ -94,29 +95,34 @@ export async function readAttestation(input: string): Promise<ReadResult> {
     return { status: "foreign", credential: onChain.credential, schema: onChain.schema };
   }
 
-  cachedSchema ??= fetchSchema(rpc, schema).then((s) => s.data);
-  const data = deserializeAttestationData<RawData>(await cachedSchema, Uint8Array.from(onChain.data));
-
   // La transacción más antigua de la cuenta es la que la creó.
   const signatures = await rpc.getSignaturesForAddress(target, { limit: 20 }).send();
   const creationSignature = signatures.length > 0 ? signatures[signatures.length - 1].signature : null;
 
+  return { status: "found", attestation: await toPublicAttestation(target, onChain, creationSignature) };
+}
+
+/** Pasa una atestación del piloto (ya comprobado emisor y esquema) a su forma pública en JSON. */
+export async function toPublicAttestation(
+  address: Address,
+  onChain: Attestation,
+  creationSignature: string | null,
+): Promise<PublicAttestation> {
+  cachedSchema ??= fetchSchema(getRpc(), onChain.schema).then((s) => s.data);
+  const data = deserializeAttestationData<RawData>(await cachedSchema, Uint8Array.from(onChain.data));
   return {
-    status: "found",
-    attestation: {
-      address: target,
-      credential: onChain.credential,
-      schema: onChain.schema,
-      signer: onChain.signer,
-      expiry: Number(onChain.expiry),
-      eventType: data.event_type,
-      period: data.period,
-      evidenceSource: data.evidence_source,
-      evidenceCommitment: toHex(data.evidence_commitment),
-      paymentConfirmed: data.payment_confirmed,
-      holder: data.holder,
-      issuedAt: Number(data.issued_at),
-      creationSignature,
-    },
+    address,
+    credential: onChain.credential,
+    schema: onChain.schema,
+    signer: onChain.signer,
+    expiry: Number(onChain.expiry),
+    eventType: data.event_type,
+    period: data.period,
+    evidenceSource: data.evidence_source,
+    evidenceCommitment: toHex(data.evidence_commitment),
+    paymentConfirmed: data.payment_confirmed,
+    holder: data.holder,
+    issuedAt: Number(data.issued_at),
+    creationSignature,
   };
 }

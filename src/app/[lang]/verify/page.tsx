@@ -27,11 +27,14 @@ export default async function VerifyPage({ params }: PageProps<"/[lang]/verify">
         </p>
       </div>
       <VerifyForm lang={lang} t={t.verify} />
-      <p>
-        <Link className="link" href={exampleProofPath(lang)}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <Link className="link" href={exampleProofPath(lang)} style={{ minHeight: 44, display: "inline-flex", alignItems: "center" }}>
           {t.verify.tryExample}
         </Link>
-      </p>
+        <Link className="link" href={`/${lang}/history`} style={{ minHeight: 44, display: "inline-flex", alignItems: "center" }}>
+          {t.history.verifyHint}
+        </Link>
+      </div>
     </div>
   );
 }
