@@ -19,7 +19,13 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 - Inicio con titular y cuatro pasos; «Generar prueba» y «Verificar» como marcadores «en construcción».
 - 404 propia, en su idioma y con la barra superior.
 
-**Pendiente de la Fase 0.** Publicar en Vercel (necesita el repositorio en GitHub).
+**Publicación.**
+
+- Repositorio público: https://github.com/renft721/peoples-protocol
+- Proyecto de Vercel `peoples-protocol` (equipo «renft721's projects»), conectado al repositorio: cada `git push` a `main` publica solo.
+- Producción: https://peoples-protocol.vercel.app — comprobado: `/` redirige según el idioma, `/en` y `/es/verify` responden 200 y `/es/no-existe` da 404.
+- El conector de Vercel de Claude no tiene permiso para crear proyectos (403) y no ve este proyecto; se usa la CLI de Vercel (`npx vercel`), que tiene sesión iniciada en el Mac de Renato.
+- Helius: cuenta creada y cambiada a devnet. La clave aún no está en Vercel; mientras, el piloto usa el RPC público de devnet.
 
 **Notas para la Fase 2.**
 
