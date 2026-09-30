@@ -65,3 +65,29 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 **Pendiente detectado.** Solo conocemos una factura de la AEAT que dé «encontrada», y ya está registrada. Para la demo en vivo hará falta un script que cierre esa atestación antes de presentar (así se ve registrarla de cero y, después, el antiduplicado). Además, el cierre enseña la decisión 4 («la retirada queda a la vista»). Se hace en la Fase 3.
 
 **Riesgo conocido.** `POST /api/proofs` está abierto: cualquiera puede hacer que el emisor registre una factura que la AEAT dé por buena. En devnet solo cuesta SOL de prueba, y el antiduplicado impide repetir. Se revisa antes de la demo.
+
+## 1 de octubre de 2026 (madrugada) — Fase 2: pantallas
+
+**Hecho.**
+
+- **Comprobar una prueba** (`/[lang]/verify` y `/[lang]/verify/[dirección]`): acepta el identificador o un enlace completo de la web. Estados: cargando, certificado, no encontrada, retirada (con enlace a la transacción de retirada), de otro emisor y error de red con «Reintentar».
+- **Certificado** (`components/Certificate.tsx`): marco doble, importe, concepto, fecha y emisor, «Qué se demuestra» (factura comprobada por Hacienda + pago confirmado por el emisor, decisión 7), recorrido, nivel de confianza (DESIGN.md §8), aviso de evidencia y detalles técnicos plegados. La huella se recalcula **en el navegador** con los datos de detrás de `#`. El importe y la fecha solo se muestran si cuadran: con un enlace manipulado se avisa y no se enseña el importe falso.
+- **Generar prueba** (`components/generate/GenerateWizard.tsx`): asistente de 4 pasos. «Portal con sesión» aparece como «Próximamente» (decisión 2). Botón «Usar la factura de ejemplo de Hacienda». Consulta a Hacienda, resumen de la factura, titular (wallet) y registro. Contempla duplicado, error de la cadena y la pantalla final con el enlace y el aviso «Guarda este enlace ahora». El foco pasa al título de cada paso.
+- **Conectar wallet** (Wallet Standard: Phantom, Solflare, Backpack…): solo lee la dirección, nunca pide firmar. Si hay wallet conectada, la prueba queda ligada a ella (`holder`). Reconexión silenciosa si ya se conectó antes.
+- **Inicio completo**: titular con certificado de ejemplo que abre la prueba real, cuatro pasos (textos adaptados a VeriFactu: ya no hablan de «login dirigido»), Para instituciones, Niveles de confianza (incluye que una retirada queda a la vista, decisión 4) y Ayuda.
+- Todos los textos en inglés y español (`src/i18n/dictionaries/`).
+- `npm run withdraw -- <dirección|example> --yes`: retira una atestación del emisor (adelantado de la Fase 3).
+
+**Prueba de ejemplo.** Se retiró `HmD3…9hwM` con `npm run withdraw` (la página la mostró como «Prueba retirada») y se volvió a registrar **desde el asistente de la web**. Misma dirección, sal nueva. La evidencia nueva está en `EXAMPLE_PROOF` de `src/protocol/config.ts`.
+
+**Fallo encontrado y corregido.** El paso «Registrando en Solana…» no se mostraba: el estado nuevo quedaba sobrescrito por el anterior al copiarlo.
+
+**Pruebas manuales hechas (local).**
+
+- Certificado con enlace completo (importe visible, aviso verde), sin evidencia (importe «Oculto») y con el importe manipulado en el enlace (aviso de que no coincide, sin importe).
+- Identificador inexistente → «Prueba no encontrada». Prueba retirada → «Prueba retirada».
+- Asistente: enlace no válido → error; factura de ejemplo → Hacienda la encuentra → registro → «Tu prueba está lista»; repetir → «Esta factura ya estaba registrada».
+- Pegar un enlace completo en «Comprobar» abre el certificado con la evidencia.
+- 390 px: inicio, generar y certificado sin desplazamiento horizontal; menú móvil con botón de wallet; sin wallet instalada aparece el aviso para instalar una.
+
+**Pendiente de probar (Renato).** Conectar una wallet real (Phantom u otra) en su navegador y registrar una prueba ligada a ella.

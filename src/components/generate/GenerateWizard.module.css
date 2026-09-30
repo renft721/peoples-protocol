@@ -1,0 +1,221 @@
+/* Generar prueba (DESIGN.md §6.2): pasos | tarjeta | paneles */
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 330px;
+  gap: 40px;
+  align-items: flex-start;
+  padding: 48px var(--margen-pagina) var(--aire-seccion);
+}
+
+.stepsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-size: 34px;
+  margin-bottom: 18px;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--texto-tenue);
+}
+
+.stepCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--borde-fuerte);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.active {
+  color: var(--texto) !important;
+  font-weight: 700 !important;
+}
+
+.active .stepCircle {
+  background: var(--primario);
+  border-color: var(--primario);
+  color: var(--primario-texto);
+}
+
+.done {
+  color: var(--texto-suave) !important;
+}
+
+.done .stepCircle {
+  border-color: var(--primario);
+  color: var(--primario);
+}
+
+.main {
+  padding: 36px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stackTight {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stepHeading {
+  font-size: 26px;
+}
+
+.stepHeading:focus {
+  outline: none;
+}
+
+.stepHeading:focus-visible {
+  outline: 3px solid var(--primario);
+}
+
+.subheading {
+  font-family: var(--fuente-texto);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* Selector de origen: tarjeta pulsable con borde de 2 px (DESIGN.md §4) */
+.sources {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.source {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border-radius: var(--radio);
+  border: 2px solid var(--borde);
+  background: var(--superficie);
+  cursor: pointer;
+}
+
+.sourceSelected {
+  border-color: var(--primario);
+}
+
+.source:has(input:focus-visible) {
+  outline: 3px solid var(--primario);
+  outline-offset: 3px;
+}
+
+.sourceDisabled {
+  cursor: not-allowed;
+}
+
+.sourceTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.sourceBody {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--texto-suave);
+}
+
+.inlineButton {
+  border: 0;
+  background: none;
+  padding: 0;
+  min-height: 44px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primario);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--borde);
+  padding-top: 22px;
+}
+
+.panels {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panelText {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+@media (max-width: 1239px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .steps {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+  }
+
+  /* En pantallas estrechas solo se ve el número de los pasos pendientes */
+  .steps li.pending span:last-child,
+  .steps li.done span:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .main {
+    padding: 20px;
+  }
+
+  .sources {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .footer > * {
+    flex: 1 1 100%;
+  }
+}

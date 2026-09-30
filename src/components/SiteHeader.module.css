@@ -118,15 +118,23 @@
   border-bottom: 2px solid transparent;
 }
 
+.mobileWallet {
+  padding-top: 12px;
+}
+
 .mobileNav .language {
   text-decoration: underline;
 }
 
-/* Por debajo de 1100 px la navegación completa no cabe: menú colapsado. */
-@media (max-width: 1099px) {
-  .desktopNav,
-  .desktopOnly {
+/* Por debajo de 1240 px la navegación completa no cabe: menú colapsado. */
+@media (max-width: 1239px) {
+  .desktopNav {
     display: none;
+  }
+
+  /* !important: el botón de wallet trae su propio display y su CSS puede cargarse después. */
+  .desktopOnly {
+    display: none !important;
   }
 
   .menuButton {
@@ -134,7 +142,7 @@
   }
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 1240px) {
   .mobileNav {
     display: none;
   }

@@ -209,3 +209,354 @@ a:hover {
   max-width: 1040px;
   margin: 0 auto;
 }
+
+.section {
+  padding: var(--aire-seccion) var(--margen-pagina) 0;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+.section-head h2 {
+  font-size: 34px;
+  line-height: 1.15;
+}
+
+.section-head p {
+  font-size: 18px;
+  color: var(--texto-suave);
+}
+
+.muted {
+  color: var(--texto-suave);
+}
+
+/* Botones deshabilitados y enlaces con aspecto de texto */
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.link {
+  color: var(--primario);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+/* Campo de texto (DESIGN.md §4): alto 50–54 px, borde --borde-fuerte, siempre con <label> */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.input {
+  font-family: inherit;
+  font-size: 16px;
+  min-height: 54px;
+  width: 100%;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio);
+  padding: 0 16px;
+  background: var(--superficie-input);
+  color: var(--texto);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--aviso-titulo);
+  border-width: 2px;
+}
+
+.field-hint {
+  font-size: 14px;
+  color: var(--texto-tenue);
+}
+
+.field-error {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--aviso-titulo);
+}
+
+/* Insignia "Verificado en Solana" */
+.badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--verificado-fondo);
+  color: var(--verificado-texto);
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radio-pildora);
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.badge-soon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--aviso-titulo);
+  background: var(--aviso-fondo);
+  border-radius: var(--radio-pildora);
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+/* Aviso (nivel de confianza, no encontrada…) */
+.notice {
+  border-radius: var(--radio);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--aviso-fondo);
+}
+
+.notice-title {
+  font-family: var(--fuente-titulo);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--aviso-titulo);
+  margin: 0;
+}
+
+.notice-ok {
+  background: var(--verificado-fondo);
+}
+
+.notice-ok .notice-title {
+  color: var(--verificado-texto);
+}
+
+.notice-plain {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+}
+
+.notice-plain .notice-title {
+  color: var(--texto);
+}
+
+/* Certificado: marco doble, el elemento distintivo del producto (DESIGN.md §4) */
+.certificate {
+  background: var(--superficie);
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.certificate-inner {
+  border: 1px solid var(--borde-fuerte);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+@media (max-width: 767px) {
+  .certificate-inner {
+    padding: 20px;
+  }
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  padding: 22px 0;
+  margin: 0;
+}
+
+.data-grid dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-tenue);
+}
+
+.data-grid dd {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.data-grid dd small {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto-tenue);
+}
+
+@media (max-width: 900px) {
+  .data-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .data-grid dd {
+    font-size: 17px;
+  }
+}
+
+/* Lista con puntos (recorrido de la prueba, qué se demuestra) */
+.dot-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dot-list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--texto-suave);
+}
+
+.dot-list li::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primario);
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+
+.check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.check-list svg {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* Desplegable de detalles técnicos y preguntas frecuentes */
+.disclosure {
+  border-top: 1px solid var(--borde);
+  padding-top: 16px;
+}
+
+.disclosure summary {
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.tech-list {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 10px 16px;
+  margin: 12px 0 0;
+}
+
+.tech-list dt {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-tenue);
+}
+
+.tech-list dd {
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .tech-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .tech-list dd {
+    margin-bottom: 10px;
+  }
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-compact {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: 16px;
+}
+
+@media (max-width: 767px) {
+  .actions-row > * {
+    flex: 1 1 100%;
+  }
+}
+
+/* Indicador de carga: solo movimiento si el usuario no pide reducirlo */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid var(--borde-fuerte);
+  border-top-color: var(--primario);
+  animation: spin 0.9s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 17px;
+  font-weight: 600;
+}
