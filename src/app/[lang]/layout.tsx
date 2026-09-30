@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Source_Sans_3, Source_Serif_4 } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
+import { WalletProvider } from "@/components/wallet/WalletProvider";
 import { hasLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import "../globals.css";
@@ -40,8 +41,14 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
         <a href="#main" className="skip-link">
           {t.a11y.skipToContent}
         </a>
-        <SiteHeader lang={lang} otherLang={otherLang} t={{ a11y: t.a11y, nav: t.nav, network: t.network, language: t.language }} />
-        <main id="main">{children}</main>
+        <WalletProvider>
+          <SiteHeader
+            lang={lang}
+            otherLang={otherLang}
+            t={{ a11y: t.a11y, nav: t.nav, network: t.network, language: t.language, wallet: t.wallet }}
+          />
+          <main id="main">{children}</main>
+        </WalletProvider>
       </body>
     </html>
   );

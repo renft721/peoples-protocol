@@ -39,6 +39,7 @@ Leer antes de tocar nada:
 - Emisor, credencial y esquema: ver `src/protocol/config.ts` y la bitácora (Fase 1).
 - `npm run setup:devnet` — alta idempotente (clave del emisor, SOL de prueba, credencial, esquema).
 - `npm run demo:attest` — prueba de punta a punta con la factura de ejemplo de la AEAT.
+- `npm run withdraw -- <dirección|example> --yes` — retira una atestación. Si se retira la de ejemplo y se vuelve a registrar, actualizar `EXAMPLE_PROOF.evidence` en `src/protocol/config.ts` (la sal cambia).
 - **No ejecutar `vercel env pull`**: sobrescribe `.env.local` y se perdería `ISSUER_SECRET_KEY`, que en Vercel es *sensitive* y no se puede recuperar.
 
 ## Comandos

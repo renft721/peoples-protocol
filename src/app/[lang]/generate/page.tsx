@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { UnderConstruction } from "@/components/UnderConstruction";
+import { GenerateWizard } from "@/components/generate/GenerateWizard";
 import { hasLocale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/generate">): Promise<Metadata> {
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
-  return { title: (await getDictionary(lang)).nav.generate };
+  return { title: (await getDictionary(lang)).generate.title };
 }
 
-// Generar prueba (DESIGN.md §6.2) — se construye en la Fase 2.
+// Generar prueba (DESIGN.md §6.2): asistente de 4 pasos.
 export default async function GeneratePage({ params }: PageProps<"/[lang]/generate">) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
   const t = await getDictionary(lang);
-  return <UnderConstruction lang={lang} title={t.nav.generate} t={t.placeholder} />;
+  return <GenerateWizard lang={lang} t={{ generate: t.generate, common: t.common }} />;
 }

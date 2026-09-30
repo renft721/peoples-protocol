@@ -20,6 +20,28 @@ export const SCHEMA_VERSION = 1;
 export const SCHEMA_DESCRIPTION =
   "People's Protocol pilot: rent payment backed by a VeriFactu invoice checked against the Spanish Tax Agency (AEAT).";
 
+/**
+ * Prueba de ejemplo (factura de ejemplo de la AEAT, NIF de pruebas 89890001K, 241,40 €),
+ * retirada y vuelta a registrar desde la web el 30-09-2026 (prueba del asistente).
+ * La evidencia incluye la sal: son datos ficticios y públicos a propósito, para que
+ * cualquiera pueda abrir el certificado completo. Si se retira y se vuelve a registrar,
+ * la dirección no cambia pero la evidencia sí: hay que actualizarla aquí.
+ */
+export const EXAMPLE_PROOF = {
+  attestation: "HmD3Qv7bvL6Y3wtDZ6KZ5LpYGnJAkH8sg98yEHqy9hwM",
+  evidence:
+    "eyJuIjoiODk4OTAwMDFLIiwicyI6IjEyMzQ1Njc4LUczMyIsImYiOiIwMS0wOS0yMDI0IiwiaSI6IjI0MS40MCIsImUiOiJwIiwiayI6Ik91ajVReEZvbE9BMXZsaWVUaEFrSkEifQ",
+  amount: "241.40",
+};
+
+/** QR de la factura de ejemplo que publica la AEAT (datos de prueba, responde «Encontrada»). */
+export const SAMPLE_QR =
+  "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=12345678-G33&fecha=01-09-2024&importe=241.4";
+
+export function exampleProofPath(lang: string): string {
+  return `/${lang}/verify/${EXAMPLE_PROOF.attestation}#e=${EXAMPLE_PROOF.evidence}`;
+}
+
 export function explorerUrl(kind: "address" | "tx", value: string): string {
   return `https://explorer.solana.com/${kind}/${value}?cluster=${CLUSTER}`;
 }

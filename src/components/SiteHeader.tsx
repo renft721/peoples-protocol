@@ -6,12 +6,13 @@ import { useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 import { LogoMark } from "./Logo";
+import { WalletButton } from "./wallet/WalletButton";
 import styles from "./SiteHeader.module.css";
 
 type Props = {
   lang: Locale;
   otherLang: Locale;
-  t: Pick<Dictionary, "a11y" | "nav" | "network" | "language">;
+  t: Pick<Dictionary, "a11y" | "nav" | "network" | "language" | "wallet">;
 };
 
 export function SiteHeader({ lang, otherLang, t }: Props) {
@@ -61,6 +62,7 @@ export function SiteHeader({ lang, otherLang, t }: Props) {
           {t.network.devnet}
         </span>
         <span className={styles.desktopOnly}>{languageLink}</span>
+        <WalletButton t={t.wallet} className={styles.desktopOnly} />
         <button
           type="button"
           className={styles.menuButton}
@@ -91,6 +93,9 @@ export function SiteHeader({ lang, otherLang, t }: Props) {
               </li>
             ))}
             <li>{languageLink}</li>
+            <li className={styles.mobileWallet}>
+              <WalletButton t={t.wallet} />
+            </li>
           </ul>
         </nav>
       )}

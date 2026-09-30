@@ -1,0 +1,91 @@
+.wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.connected {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.disconnect {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: min(320px, calc(100vw - 32px));
+  margin: 0;
+  padding: 16px;
+  background: var(--superficie);
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.popover ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.popoverTitle {
+  font-weight: 700;
+}
+
+.walletOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--superficie-input);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+/* En el menú móvil el aviso va debajo, sin flotar. */
+@media (max-width: 1239px) {
+  .popover {
+    position: static;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .wrap {
+    flex-wrap: wrap;
+  }
+}
