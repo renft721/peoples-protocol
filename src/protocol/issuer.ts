@@ -19,7 +19,7 @@ import {
   type Schema,
 } from "sas-lib";
 import { derivePilotAddresses } from "./addresses";
-import { ISSUER_AUTHORITY } from "./config";
+import { DEMO_AGENCY_NIF, ISSUER_AUTHORITY } from "./config";
 import { evidenceCommitment, invoiceNonceBytes, randomSalt, statementCommitment, statementNonceBytes } from "./evidence";
 import type { AttestationData, EvidenceSource } from "./schema";
 import { getRpc, sendAndConfirm } from "./solana";
@@ -95,13 +95,19 @@ async function publish(nonceBytes: Uint8Array, data: AttestationData, salt: Uint
 
 const now = () => BigInt(Math.floor(Date.now() / 1000));
 
+/** ¿La emitió la propia agencia? Solo esas se pueden registrar. */
+export function isOwnInvoice(invoice: VerifactuInvoice): boolean {
+  return invoice.issuerNif === DEMO_AGENCY_NIF;
+}
+
 /**
- * Publica la atestación de una factura YA COMPROBADA contra la AEAT.
+ * Publica la atestación de una factura YA COMPROBADA contra la AEAT y emitida por la propia agencia.
  * Quien llame es responsable de haber hecho esa comprobación justo antes.
  */
 export async function attestInvoice(invoice: VerifactuInvoice, options: { holder?: string } = {}): Promise<AttestResult> {
   const holder = options.holder?.trim() ?? "";
   if (holder && !isAddress(holder)) throw new Error("La wallet del titular no es una dirección de Solana válida");
+  if (!isOwnInvoice(invoice)) throw new Error(`El emisor solo registra sus propias facturas (NIF ${DEMO_AGENCY_NIF})`);
 
   const { nonceKey } = await loadIssuer();
   const salt = randomSalt();

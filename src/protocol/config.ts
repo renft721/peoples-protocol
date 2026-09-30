@@ -15,6 +15,13 @@ export const ISSUER_AUTHORITY = "FchZy9B2jfLwQb1mgT34BpUr7gCyYKMABNr6HpB3nH6G";
 /** Nombre de la credencial en SAS (máx. 32 bytes: forma parte de su dirección). */
 export const CREDENTIAL_NAME = "PeoplesProtocolDemoAgency";
 
+/**
+ * NIF de la agencia ficticia. El emisor solo da fe de facturas emitidas por él mismo: si no,
+ * cualquiera podría hacer que "confirmara el pago" de una factura ajena (un tique de restaurante…).
+ * Es el NIF de pruebas que usa la AEAT en su factura de ejemplo.
+ */
+export const DEMO_AGENCY_NIF = "89890001K";
+
 export const SCHEMA_NAME = "PP_RentPayment";
 export const SCHEMA_VERSION = 1;
 export const SCHEMA_DESCRIPTION =

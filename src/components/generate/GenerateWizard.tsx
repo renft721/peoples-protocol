@@ -9,7 +9,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 import { fill, formatAmount, formatInvoiceDate, formatPeriod, shortAddress } from "@/lib/format";
 import type { AeatVerdict } from "@/protocol/aeat";
-import { SAMPLE_QR } from "@/protocol/config";
+import { DEMO_AGENCY_NIF, SAMPLE_QR } from "@/protocol/config";
 import type { VerifactuInvoice } from "@/protocol/verifactu";
 import styles from "./GenerateWizard.module.css";
 
@@ -18,7 +18,7 @@ type Checked = { invoice: VerifactuInvoice; period: string };
 type Phase =
   | { kind: "input"; error: string | null }
   | { kind: "checking" }
-  | ({ kind: "checked"; verdict: AeatVerdict } & Checked)
+  | ({ kind: "checked"; verdict: AeatVerdict; issuerAccepts: boolean } & Checked)
   | ({ kind: "registering" } & Checked)
   | { kind: "duplicate"; attestation: string }
   | { kind: "failed"; message: string }
@@ -77,7 +77,7 @@ export function GenerateWizard({ lang, t }: { lang: Locale; t: T }) {
         setPhase({ kind: "input", error: errorMessage(t, body.error) });
         return;
       }
-      setPhase({ kind: "checked", verdict: body.verdict, invoice: body.invoice, period: body.period });
+      setPhase({ kind: "checked", verdict: body.verdict, issuerAccepts: body.issuerAccepts, invoice: body.invoice, period: body.period });
     } catch {
       setPhase({ kind: "input", error: g.errors.network });
     }
@@ -207,7 +207,19 @@ export function GenerateWizard({ lang, t }: { lang: Locale; t: T }) {
             <h2 id="step-heading" ref={headingRef} tabIndex={-1} className={styles.stepHeading}>
               {g.steps[1]}
             </h2>
-            {phase.verdict.status === "found" ? (
+            {phase.verdict.status === "found" && !phase.issuerAccepts ? (
+              <>
+                <Notice title={g.check.otherIssuerTitle}>
+                  <p>{fill(g.check.otherIssuerBody, { nif: DEMO_AGENCY_NIF })}</p>
+                </Notice>
+                <InvoiceSummary lang={lang} t={g.check} invoice={phase.invoice} period={phase.period} />
+                <div className={styles.footer}>
+                  <button type="button" className="btn btn-secondary" onClick={restart}>
+                    {t.common.back}
+                  </button>
+                </div>
+              </>
+            ) : phase.verdict.status === "found" ? (
               <>
                 <Notice tone="ok" title={g.check.foundTitle}>
                   <p>{g.check.foundBody}</p>
