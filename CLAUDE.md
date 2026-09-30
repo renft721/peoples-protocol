@@ -34,6 +34,13 @@ Leer antes de tocar nada:
 - **Dos idiomas siempre.** Ningún texto escrito directamente en un componente: va al diccionario, en inglés y en español.
 - Accesibilidad de DESIGN.md §9: elementos reales (`<button>`, `<a>`, `<label>`), foco visible, 44 px mínimos, funciona a 390 px.
 
+## Solana devnet
+
+- Emisor, credencial y esquema: ver `src/protocol/config.ts` y la bitácora (Fase 1).
+- `npm run setup:devnet` — alta idempotente (clave del emisor, SOL de prueba, credencial, esquema).
+- `npm run demo:attest` — prueba de punta a punta con la factura de ejemplo de la AEAT.
+- **No ejecutar `vercel env pull`**: sobrescribe `.env.local` y se perdería `ISSUER_SECRET_KEY`, que en Vercel es *sensitive* y no se puede recuperar.
+
 ## Comandos
 
 ```bash
@@ -41,4 +48,5 @@ npm run dev        # desarrollo en http://localhost:3000
 npm run typecheck  # tipos
 npm run lint
 npm run build
+npm test           # tests automáticos del protocolo
 ```
