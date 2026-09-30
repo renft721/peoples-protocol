@@ -39,3 +39,29 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 - A 390 px: sin desplazamiento horizontal; el menú se abre y se cierra, y marca la página activa.
 - `/es/no-existe` muestra la 404 propia en español.
 - `typecheck`, `lint` y `build` sin errores.
+
+## 30 de septiembre de 2026 (noche) — Fase 1: núcleo del protocolo
+
+**Hecho** (código en `src/protocol/`, que es el embrión del SDK):
+
+- `verifactu.ts`: lee y valida el enlace del QR (solo VeriFactu, solo hosts de la AEAT, fecha e importe válidos).
+- `aeat.ts`: consulta la página pública de la AEAT desde el servidor e interpreta la respuesta (encontrada / no encontrada / datos rechazados / página desconocida).
+- `evidence.ts` y `link.ts`: compromiso SHA-256(sal ‖ factura) para la cadena, nonce HMAC con clave del emisor para el antiduplicado, y enlace para compartir con la evidencia detrás de `#`.
+- `schema.ts`: esquema de SAS (`event_type`, `period`, `evidence_source`, `evidence_commitment`, `payment_confirmed`, `holder`, `issued_at`). Sustituye al del documento: ver comentarios del fichero y decisión 5 del plan.
+- `issuer.ts`: el emisor de demostración firma atestaciones. `read.ts`: lee una atestación y distingue encontrada, no existe, retirada (cerrada) y de otro emisor; una cuenta que no es una atestación se trata como «no encontrada».
+- API: `POST /api/verifactu/check`, `POST /api/proofs` (vuelve a consultar a la AEAT antes de registrar), `GET /api/proofs/[address]`.
+- `vercel.json`: funciones en París (`cdg1`), más cerca de la AEAT.
+- 33 tests automáticos (`npm test`) con respuestas reales de la AEAT en `src/protocol/__fixtures__/`.
+
+**Devnet** (`npm run setup:devnet`):
+
+- Emisor: `FchZy9B2jfLwQb1mgT34BpUr7gCyYKMABNr6HpB3nH6G`. Clave privada en `.env.local` (Mac de Renato) y en Vercel como variable *sensitive* (no se puede volver a leer). Si se pierde, se crea otro emisor con el mismo script.
+- Credencial: `6r6CdmF1iCpgADRBpqwjVWRTweALVtCjXN4b3oBsSBhZ`
+- Esquema: `BtNyhYMdMWFhETYdto28XYMRw4iKmHqs3nxDmrQd12QU`
+- El grifo público de devnet estaba agotado; Renato consiguió 5 SOL de prueba en faucet.solana.com.
+
+**Prueba de punta a punta** (`npm run demo:attest`), 30-09-2026: factura de ejemplo de la AEAT (NIF de pruebas 89890001K, 241,40 €, 01-09-2024) → AEAT «encontrada» → atestación `HmD3Qv7bvL6Y3wtDZ6KZ5LpYGnJAkH8sg98yEHqy9hwM` publicada → leída de la cadena → el enlace cuadra con la huella → segundo intento rechazado como duplicado.
+
+**Pendiente detectado.** Solo conocemos una factura de la AEAT que dé «encontrada», y ya está registrada. Para la demo en vivo hará falta un script que cierre esa atestación antes de presentar (así se ve registrarla de cero y, después, el antiduplicado). Además, el cierre enseña la decisión 4 («la retirada queda a la vista»). Se hace en la Fase 3.
+
+**Riesgo conocido.** `POST /api/proofs` está abierto: cualquiera puede hacer que el emisor registre una factura que la AEAT dé por buena. En devnet solo cuesta SOL de prueba, y el antiduplicado impide repetir. Se revisa antes de la demo.
