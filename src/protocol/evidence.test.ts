@@ -5,6 +5,7 @@ import {
   canonicalStatement,
   evidenceCommitment,
   invoiceNonceBytes,
+  invoiceSalt,
   randomSalt,
   statementCommitment,
   statementNonceBytes,
@@ -114,5 +115,18 @@ describe("pagos afirmados por el emisor", () => {
     const b = await statementCommitment(holder, "2024-10", "rent_payment", randomSalt());
     expect(a).toHaveLength(32);
     expect(bytesEqual(a, b)).toBe(false);
+  });
+});
+
+describe("sal de una factura", () => {
+  it("es siempre la misma para la misma factura y emisor: el enlace no cambia al volver a registrarla", async () => {
+    const a = await invoiceSalt(invoice, key);
+    expect(a).toHaveLength(16);
+    expect(bytesEqual(a, await invoiceSalt({ ...invoice }, key))).toBe(true);
+  });
+
+  it("sin la clave del emisor no se puede calcular, y es distinta del nonce", async () => {
+    expect(bytesEqual(await invoiceSalt(invoice, key), await invoiceSalt(invoice, otherKey))).toBe(false);
+    expect(bytesEqual(await invoiceSalt(invoice, key), (await invoiceNonceBytes(invoice, key)).slice(0, 16))).toBe(false);
   });
 });

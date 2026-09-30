@@ -3,9 +3,11 @@
 // Dos huellas distintas, cada una con un fin:
 //
 // 1. Compromiso (va en los datos de la atestación): SHA-256(sal || factura).
-//    La sal es aleatoria y solo la tiene la persona, dentro de su enlace. Sin la sal nadie puede
-//    averiguar el importe ni el NIF probando combinaciones; con el enlace, cualquiera puede
-//    recalcular la huella y comprobar que coincide con la registrada.
+//    La sal solo la tiene la persona, dentro de su enlace. Sin la sal nadie puede averiguar el
+//    importe ni el NIF probando combinaciones; con el enlace, cualquiera puede recalcular la huella
+//    y comprobar que coincide con la registrada. La sal de una factura se deriva de la clave secreta
+//    del emisor (invoiceSalt): nadie de fuera puede calcularla, pero es siempre la misma para la misma
+//    factura, así que retirar y volver a registrar una factura da el mismo enlace.
 //
 // 2. Nonce (decide la dirección de la atestación en SAS): HMAC-SHA256(clave del emisor, factura).
 //    Es siempre el mismo para la misma factura, así que registrarla dos veces choca con una cuenta
@@ -53,6 +55,11 @@ async function hmac(message: string, key: Uint8Array): Promise<Uint8Array> {
     "sign",
   ]);
   return new Uint8Array(await crypto.subtle.sign("HMAC", hmacKey, encoder.encode(message)));
+}
+
+/** Sal de una factura: HMAC(clave del emisor, "salt|" + factura), recortada a SALT_BYTES. */
+export async function invoiceSalt(invoice: VerifactuInvoice, key: Uint8Array): Promise<Uint8Array> {
+  return (await hmac(`salt|${canonicalInvoice(invoice)}`, key)).slice(0, SALT_BYTES);
 }
 
 /** 32 bytes deterministas por factura y emisor. `key` sale de la clave privada del emisor (issuer.ts). */
