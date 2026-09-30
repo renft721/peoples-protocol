@@ -34,7 +34,7 @@ const STEP_OF_PHASE: Record<Phase["kind"], number> = {
   done: 4,
 };
 
-type T = Pick<Dictionary, "generate" | "common">;
+type T = Pick<Dictionary, "generate" | "common" | "history">;
 
 function errorMessage(t: T, code: unknown): string {
   const errors = t.generate.errors as Record<string, string>;
@@ -302,7 +302,19 @@ export function GenerateWizard({ lang, t }: { lang: Locale; t: T }) {
           </div>
         )}
 
-        {phase.kind === "done" && <Done lang={lang} t={t} path={phase.path} onRestart={() => { setQr(""); restart(); }} headingRef={headingRef} />}
+        {phase.kind === "done" && (
+          <Done
+            lang={lang}
+            t={t}
+            path={phase.path}
+            holder={holder}
+            onRestart={() => {
+              setQr("");
+              restart();
+            }}
+            headingRef={headingRef}
+          />
+        )}
       </section>
 
       <aside className={styles.panels} aria-label={g.panels.sharedTitle}>
@@ -350,9 +362,16 @@ function InvoiceSummary({ lang, t, invoice, period }: { lang: Locale; t: Diction
   );
 }
 
-type DoneProps = { lang: Locale; t: T; path: string; onRestart: () => void; headingRef: React.RefObject<HTMLHeadingElement | null> };
+type DoneProps = {
+  lang: Locale;
+  t: T;
+  path: string;
+  holder: string | null;
+  onRestart: () => void;
+  headingRef: React.RefObject<HTMLHeadingElement | null>;
+};
 
-function Done({ lang, t, path, onRestart, headingRef }: DoneProps) {
+function Done({ lang, t, path, holder, onRestart, headingRef }: DoneProps) {
   const d = t.generate.done;
   // La URL completa solo se conoce en el navegador (origen + ruta + evidencia).
   const [url, setUrl] = useState(path);
@@ -374,6 +393,13 @@ function Done({ lang, t, path, onRestart, headingRef }: DoneProps) {
       <Notice title={d.saveWarningTitle}>
         <p>{d.saveWarning}</p>
       </Notice>
+      {holder && (
+        <p>
+          <Link className="link" href={`/${lang}/history/${holder}`}>
+            {t.history.fromWizard}
+          </Link>
+        </p>
+      )}
       <div className={styles.footer}>
         <button type="button" className="btn btn-secondary" onClick={onRestart}>
           {d.another}

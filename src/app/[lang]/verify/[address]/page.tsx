@@ -28,7 +28,7 @@ export default async function VerifyAddressPage({ params }: PageProps<"/[lang]/v
         </p>
       </div>
       <VerifyForm key={address} lang={lang} t={t.verify} initialValue={address} />
-      <VerifyResult lang={lang} address={address} t={{ verify: t.verify, certificate: t.certificate, common: t.common }} />
+      <VerifyResult lang={lang} address={address} t={{ verify: t.verify, certificate: t.certificate, common: t.common, history: t.history }} />
     </div>
   );
 }

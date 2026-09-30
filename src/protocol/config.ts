@@ -22,7 +22,8 @@ export const SCHEMA_DESCRIPTION =
 
 /**
  * Prueba de ejemplo (factura de ejemplo de la AEAT, NIF de pruebas 89890001K, 241,40 €),
- * retirada y vuelta a registrar desde la web el 30-09-2026 (prueba del asistente).
+ * registrada el 01-10-2026 con `npm run demo:attest -- --holder <titular>` y ligada a la wallet
+ * de una titular ficticia (DEMO_HOLDER), para que su historial tenga contenido.
  * La evidencia incluye la sal: son datos ficticios y públicos a propósito, para que
  * cualquiera pueda abrir el certificado completo. Si se retira y se vuelve a registrar,
  * la dirección no cambia pero la evidencia sí: hay que actualizarla aquí.
@@ -30,9 +31,12 @@ export const SCHEMA_DESCRIPTION =
 export const EXAMPLE_PROOF = {
   attestation: "HmD3Qv7bvL6Y3wtDZ6KZ5LpYGnJAkH8sg98yEHqy9hwM",
   evidence:
-    "eyJuIjoiODk4OTAwMDFLIiwicyI6IjEyMzQ1Njc4LUczMyIsImYiOiIwMS0wOS0yMDI0IiwiaSI6IjI0MS40MCIsImUiOiJwIiwiayI6Ik91ajVReEZvbE9BMXZsaWVUaEFrSkEifQ",
+    "eyJuIjoiODk4OTAwMDFLIiwicyI6IjEyMzQ1Njc4LUczMyIsImYiOiIwMS0wOS0yMDI0IiwiaSI6IjI0MS40MCIsImUiOiJwIiwiayI6IkFTemFmNTF6TVh4ZWFibGVuYi1QZkEifQ",
   amount: "241.40",
 };
+
+/** Wallet de la titular ficticia de la demo. Nadie tiene su clave: solo identifica a la titular. */
+export const DEMO_HOLDER = "8ZaNpA6oyqQwtupMqse9Br37ZRrBdRcC6DaM2R1gLKCi";
 
 /** QR de la factura de ejemplo que publica la AEAT (datos de prueba, responde «Encontrada»). */
 export const SAMPLE_QR =

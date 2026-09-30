@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Certificate, type CertificateModel } from "@/components/Certificate";
 import { CopyButton } from "@/components/CopyButton";
@@ -19,7 +20,7 @@ type View =
   | { kind: "foreign" }
   | { kind: "error" };
 
-type Props = { lang: Locale; address: string; t: Pick<Dictionary, "verify" | "certificate" | "common"> };
+type Props = { lang: Locale; address: string; t: Pick<Dictionary, "verify" | "certificate" | "common" | "history"> };
 
 export function VerifyResult({ lang, address, t }: Props) {
   const [view, setView] = useState<View>({ kind: "loading" });
@@ -81,6 +82,11 @@ export function VerifyResult({ lang, address, t }: Props) {
               <a className="btn btn-secondary btn-compact" href={view.explorer} target="_blank" rel="noopener noreferrer">
                 {t.common.viewExplorer}
               </a>
+              {view.model.technical?.holder && (
+                <Link className="btn btn-secondary btn-compact" href={`/${lang}/history/${view.model.technical.holder}`}>
+                  {t.history.fromCertificate}
+                </Link>
+              )}
             </>
           }
         />

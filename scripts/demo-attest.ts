@@ -1,7 +1,8 @@
 // Prueba de punta a punta del núcleo del protocolo (criterio de cierre de la Fase 1).
 //
-//   npm run demo:attest                 # factura de ejemplo de la AEAT
-//   npm run demo:attest -- "<URL QR>"   # otra factura
+//   npm run demo:attest                          # factura de ejemplo de la AEAT
+//   npm run demo:attest -- "<URL QR>"            # otra factura
+//   npm run demo:attest -- --holder <wallet>     # ligada a la wallet de un titular
 //
 // 1. Lee el QR  2. Pregunta a la AEAT  3. Publica la atestación en devnet
 // 4. La vuelve a leer de la cadena  5. Comprueba que el enlace cuadra con la huella registrada
@@ -9,15 +10,13 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { checkInvoiceWithAeat } from "../src/protocol/aeat";
-import { explorerUrl } from "../src/protocol/config";
+import { SAMPLE_QR, explorerUrl } from "../src/protocol/config";
 import { bytesEqual, evidenceCommitment } from "../src/protocol/evidence";
 import { attestInvoice } from "../src/protocol/issuer";
 import { decodeEvidence, encodeEvidence, verifyPath } from "../src/protocol/link";
 import { readAttestation } from "../src/protocol/read";
 import { parseVerifactuQr } from "../src/protocol/verifactu";
 
-const SAMPLE_QR =
-  "https://www2.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR?nif=89890001K&numserie=12345678-G33&fecha=01-09-2024&importe=241.4";
 
 function loadEnv() {
   if (!existsSync(".env.local")) return;
@@ -31,7 +30,10 @@ const hexToBytes = (hex: string) => Uint8Array.from(hex.match(/../g)!.map((h) =>
 
 async function main() {
   loadEnv();
-  const qr = process.argv[2] ?? SAMPLE_QR;
+  const args = process.argv.slice(2);
+  const holderFlag = args.indexOf("--holder");
+  const holder = holderFlag >= 0 ? args[holderFlag + 1] : undefined;
+  const qr = args.find((arg, i) => !arg.startsWith("--") && i !== holderFlag + 1) ?? SAMPLE_QR;
 
   const parsed = parseVerifactuQr(qr);
   if (!parsed.ok) throw new Error(`QR no válido: ${parsed.error}`);
@@ -41,7 +43,7 @@ async function main() {
   console.log("2. AEAT:", verdict);
   if (verdict.status !== "found") throw new Error("La AEAT no encuentra la factura");
 
-  const result = await attestInvoice(parsed.invoice);
+  const result = await attestInvoice(parsed.invoice, { holder });
   if (result.status === "duplicate") {
     console.log(`3. Ya estaba registrada (antiduplicado): ${result.attestation}\n   ${explorerUrl("address", result.attestation)}`);
     const again = await readAttestation(result.attestation);
@@ -62,8 +64,9 @@ async function main() {
   console.log(`5. El enlace cuadra con la huella registrada: ${matches ? "SÍ" : "NO"}`);
   if (!matches) throw new Error("La huella no coincide");
   console.log(`   Enlace: https://peoples-protocol.vercel.app${verifyPath("es", result.attestation, evidence)}`);
+  console.log(`   Evidencia (para EXAMPLE_PROOF): ${encodeEvidence(evidence)}`);
 
-  const second = await attestInvoice(parsed.invoice);
+  const second = await attestInvoice(parsed.invoice, { holder });
   console.log(`6. Segundo intento con la misma factura: ${second.status === "duplicate" ? "rechazado como duplicado ✔" : "¡SE CREÓ OTRA! ✘"}`);
   if (second.status !== "duplicate") throw new Error("El antiduplicado no funcionó");
 }

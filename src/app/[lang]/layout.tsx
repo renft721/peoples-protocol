@@ -46,6 +46,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             lang={lang}
             otherLang={otherLang}
             t={{ a11y: t.a11y, nav: t.nav, network: t.network, language: t.language, wallet: t.wallet }}
+            historyLabel={t.history.mine}
           />
           <main id="main">{children}</main>
         </WalletProvider>

@@ -13,9 +13,10 @@ type Props = {
   lang: Locale;
   otherLang: Locale;
   t: Pick<Dictionary, "a11y" | "nav" | "network" | "language" | "wallet">;
+  historyLabel: string;
 };
 
-export function SiteHeader({ lang, otherLang, t }: Props) {
+export function SiteHeader({ lang, otherLang, t, historyLabel }: Props) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -62,7 +63,7 @@ export function SiteHeader({ lang, otherLang, t }: Props) {
           {t.network.devnet}
         </span>
         <span className={styles.desktopOnly}>{languageLink}</span>
-        <WalletButton t={t.wallet} className={styles.desktopOnly} />
+        <WalletButton lang={lang} t={t.wallet} historyLabel={historyLabel} className={styles.desktopOnly} />
         <button
           type="button"
           className={styles.menuButton}
@@ -94,7 +95,7 @@ export function SiteHeader({ lang, otherLang, t }: Props) {
             ))}
             <li>{languageLink}</li>
             <li className={styles.mobileWallet}>
-              <WalletButton t={t.wallet} />
+              <WalletButton lang={lang} t={t.wallet} historyLabel={historyLabel} />
             </li>
           </ul>
         </nav>
