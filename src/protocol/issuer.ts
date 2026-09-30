@@ -20,7 +20,7 @@ import {
 } from "sas-lib";
 import { derivePilotAddresses } from "./addresses";
 import { ISSUER_AUTHORITY } from "./config";
-import { evidenceCommitment, invoiceNonceBytes, randomSalt } from "./evidence";
+import { evidenceCommitment, invoiceNonceBytes, randomSalt, statementCommitment, statementNonceBytes } from "./evidence";
 import type { AttestationData, EvidenceSource } from "./schema";
 import { getRpc, sendAndConfirm } from "./solana";
 import { invoicePeriod, type VerifactuInvoice } from "./verifactu";
@@ -60,39 +60,20 @@ export function pilotSchema(schemaAddress: Address): Promise<Schema> {
 
 export type AttestResult =
   | { status: "created"; attestation: Address; signature: Signature; salt: Uint8Array; period: string }
-  /** Esa factura ya estaba registrada por este emisor: no se crea otra. */
+  /** Ya estaba registrada por este emisor (misma factura, o mismo titular y mes): no se crea otra. */
   | { status: "duplicate"; attestation: Address };
 
-/**
- * Publica la atestación de una factura YA COMPROBADA contra la AEAT.
- * Quien llame es responsable de haber hecho esa comprobación justo antes.
- */
-export async function attestInvoice(invoice: VerifactuInvoice, options: { holder?: string } = {}): Promise<AttestResult> {
-  const holder = options.holder?.trim() ?? "";
-  if (holder && !isAddress(holder)) throw new Error("La wallet del titular no es una dirección de Solana válida");
-
+/** Parte común: dirección determinista por nonce, antiduplicado, serialización y envío. */
+async function publish(nonceBytes: Uint8Array, data: AttestationData, salt: Uint8Array): Promise<AttestResult> {
   const rpc = getRpc();
-  const { signer, nonceKey } = await loadIssuer();
+  const { signer } = await loadIssuer();
   const { credential, schema } = await derivePilotAddresses(signer.address);
 
-  const nonce = getAddressDecoder().decode(await invoiceNonceBytes(invoice, nonceKey));
+  const nonce = getAddressDecoder().decode(nonceBytes);
   const [attestation] = await deriveAttestationPda({ credential, schema, nonce });
 
   const existing = await fetchMaybeAttestation(rpc, attestation);
   if (existing.exists) return { status: "duplicate", attestation };
-
-  const salt = randomSalt();
-  const period = invoicePeriod(invoice);
-  const source: EvidenceSource = invoice.environment === "production" ? "verifactu-aeat" : "verifactu-aeat-test";
-  const data: AttestationData = {
-    event_type: "rent_payment",
-    period,
-    evidence_source: source,
-    evidence_commitment: await evidenceCommitment(invoice, salt),
-    payment_confirmed: true,
-    holder,
-    issued_at: BigInt(Math.floor(Date.now() / 1000)),
-  };
 
   const instruction = getCreateAttestationInstruction({
     payer: signer,
@@ -109,5 +90,62 @@ export async function attestInvoice(invoice: VerifactuInvoice, options: { holder
   });
 
   const signature = await sendAndConfirm(rpc, signer, [instruction]);
-  return { status: "created", attestation, signature, salt, period };
+  return { status: "created", attestation, signature, salt, period: data.period };
+}
+
+const now = () => BigInt(Math.floor(Date.now() / 1000));
+
+/**
+ * Publica la atestación de una factura YA COMPROBADA contra la AEAT.
+ * Quien llame es responsable de haber hecho esa comprobación justo antes.
+ */
+export async function attestInvoice(invoice: VerifactuInvoice, options: { holder?: string } = {}): Promise<AttestResult> {
+  const holder = options.holder?.trim() ?? "";
+  if (holder && !isAddress(holder)) throw new Error("La wallet del titular no es una dirección de Solana válida");
+
+  const { nonceKey } = await loadIssuer();
+  const salt = randomSalt();
+  const source: EvidenceSource = invoice.environment === "production" ? "verifactu-aeat" : "verifactu-aeat-test";
+  return publish(
+    await invoiceNonceBytes(invoice, nonceKey),
+    {
+      event_type: "rent_payment",
+      period: invoicePeriod(invoice),
+      evidence_source: source,
+      evidence_commitment: await evidenceCommitment(invoice, salt),
+      payment_confirmed: true,
+      holder,
+      issued_at: now(),
+    },
+    salt,
+  );
+}
+
+const PERIOD = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+/**
+ * Publica un pago AFIRMADO por el emisor, sin factura ni comprobación externa (nivel de confianza
+ * más bajo, y así se muestra). Solo desde el lado del emisor: no hay ruta de API pública para esto.
+ * La sal que se devuelve es la que permitiría al emisor demostrar más adelante su registro interno.
+ */
+export async function attestIssuerStatement(holder: string, period: string): Promise<AttestResult> {
+  if (!isAddress(holder)) throw new Error("Un pago afirmado por el emisor necesita la wallet del titular");
+  if (!PERIOD.test(period)) throw new Error(`Periodo no válido: ${period} (formato AAAA-MM)`);
+
+  const { nonceKey } = await loadIssuer();
+  const salt = randomSalt();
+  const eventType = "rent_payment" as const;
+  return publish(
+    await statementNonceBytes(holder, period, eventType, nonceKey),
+    {
+      event_type: eventType,
+      period,
+      evidence_source: "issuer-statement",
+      evidence_commitment: await statementCommitment(holder, period, eventType, salt),
+      payment_confirmed: true,
+      holder,
+      issued_at: now(),
+    },
+    salt,
+  );
 }

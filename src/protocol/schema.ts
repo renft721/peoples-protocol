@@ -24,7 +24,15 @@ export const SCHEMA_LAYOUT = Uint8Array.from(SCHEMA_FIELDS.map(([, type]) => typ
 export const SCHEMA_FIELD_NAMES = SCHEMA_FIELDS.map(([name]) => name);
 
 export type EventType = "rent_payment";
-export type EvidenceSource = "verifactu-aeat" | "verifactu-aeat-test";
+/**
+ * De dónde sale la prueba (y por tanto su nivel de confianza):
+ * - verifactu-aeat / -test: factura comprobada contra la AEAT (producción / entorno de pruebas).
+ * - issuer-statement: el emisor afirma el pago desde su propio sistema, sin comprobación externa.
+ *   Es lo que haría una agencia publicando en lote los pagos de sus inquilinos (escenario 1 del
+ *   documento del proyecto). Solo se publica desde el lado del emisor (scripts/issuer-statements.ts),
+ *   nunca desde la web pública.
+ */
+export type EvidenceSource = "verifactu-aeat" | "verifactu-aeat-test" | "issuer-statement";
 
 /** Datos de una atestación tal como se guardan en la cadena. */
 export type AttestationData = {

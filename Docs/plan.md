@@ -17,7 +17,13 @@ Redactado el 30 de septiembre de 2026. Entrega en Colosseum: **12 de octubre de 
 7. **Una factura no demuestra un pago.** VeriFactu prueba que la factura existe y se declaró, no que se pagara. El certificado muestra dos niveles: «Factura comprobada por Hacienda» y «Pago confirmado por [Emisor]».
 8. **VeriFactu no es obligatorio hasta 2027** (RDL 15/2025: 1 de enero para sociedades, 1 de julio para el resto). El documento dice «obligatorio desde 2026»: hay que corregirlo.
 9. **Datos ficticios.** Se usan facturas de prueba de la AEAT. Comprobado el 30-09-2026: la página pública de validación del QR responde «Encontrada» y «No encontrada» a una petición directa desde un servidor, sin captcha ni sesión, tanto en producción (`www2.agenciatributaria.gob.es`) como en pruebas (`prewww2.aeat.es`).
-10. **Mejora de producto (opcional, si sobra tiempo): historial por titular.** «María lleva 12 meses pagando a tiempo» transmite el valor mejor que una prueba suelta.
+10. **Mejora de producto: historial por titular.** «María lleva 12 meses pagando a tiempo» transmite el valor mejor que una prueba suelta. Hecho el 01-10-2026 (`/[lang]/history/[wallet]`).
+11. **Tercer nivel de confianza: «afirmado por el emisor».** Solo hay una factura de ejemplo de la AEAT que responda «Encontrada», así que el historial de ejemplo tendría una sola prueba. Se añade el origen `issuer-statement`: la agencia publica el pago desde su propio sistema, sin factura ni comprobación externa. Es el escenario 1 del documento: la institución publica en lote. Reglas:
+    - Solo se publica desde el lado del emisor (`npm run issuer:statements`), nunca desde la web pública.
+    - Una prueba por titular, mes y tipo (antiduplicado).
+    - El certificado no muestra importe ni factura, solo «pago confirmado por el emisor», y el aviso de confianza dice que no hay comprobación externa.
+    
+    Aprobado por Renato el 01-10-2026.
 
 ## Fases
 

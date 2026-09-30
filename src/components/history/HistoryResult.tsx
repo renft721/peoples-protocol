@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { CheckIcon, Loading, Notice } from "@/components/ui";
+import { CheckIcon, Loading, Notice, VerifiedBadge } from "@/components/ui";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/en";
 import { fill, formatPeriod, formatTimestamp } from "@/lib/format";
@@ -72,18 +72,22 @@ export function HistoryResult({ lang, wallet, t }: Props) {
     items.length === 1
       ? fill(h.summaryOne, { period: newest })
       : fill(h.summaryMany, { count: String(items.length), from: oldest, to: newest });
-  const allAeat = items.every((item) => item.evidenceSource.startsWith("verifactu-aeat"));
+  const isAeat = (item: PublicAttestation) => item.evidenceSource.startsWith("verifactu-aeat");
+  const aeatCount = items.filter(isAeat).length;
+  const statementCount = items.length - aeatCount;
 
   return (
     <div className={styles.wrap}>
       <div className="certificate">
         <div className={`certificate-inner ${styles.summary}`}>
           <p className={styles.summaryText}>{summary}</p>
-          {allAeat && (
+          {statementCount === 0 ? (
             <p className={styles.summaryAeat}>
               <CheckIcon />
               {items.length === 1 ? h.summaryAeatOne : h.summaryAeat}
             </p>
+          ) : (
+            <p className={styles.summaryAeat}>{fill(h.summaryMixed, { aeat: String(aeatCount), statement: String(statementCount) })}</p>
           )}
           <p className="muted" style={{ fontSize: 15 }}>
             {h.privacy}
@@ -106,11 +110,20 @@ export function HistoryResult({ lang, wallet, t }: Props) {
                   {h.viewCertificate}
                 </Link>
               </div>
+              <p>
+                {isAeat(item) ? (
+                  <VerifiedBadge label={t.common.trustLevel.aeat} />
+                ) : (
+                  <span className="badge-caution">{t.common.trustLevel.statement}</span>
+                )}
+              </p>
               <ul className={styles.claims}>
-                <li>
-                  <CheckIcon />
-                  {t.certificate.invoiceVerified}
-                </li>
+                {isAeat(item) && (
+                  <li>
+                    <CheckIcon />
+                    {t.certificate.invoiceVerified}
+                  </li>
+                )}
                 {item.paymentConfirmed && (
                   <li>
                     <CheckIcon />

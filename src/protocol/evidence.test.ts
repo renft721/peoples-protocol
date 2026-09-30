@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { bytesEqual, canonicalInvoice, evidenceCommitment, invoiceNonceBytes, randomSalt } from "./evidence";
+import {
+  bytesEqual,
+  canonicalInvoice,
+  canonicalStatement,
+  evidenceCommitment,
+  invoiceNonceBytes,
+  randomSalt,
+  statementCommitment,
+  statementNonceBytes,
+} from "./evidence";
 import { decodeEvidence, encodeEvidence, evidenceFromHash, verifyPath } from "./link";
 import type { VerifactuInvoice } from "./verifactu";
 
@@ -83,4 +92,27 @@ describe("enlace para compartir", () => {
       expect(decodeEvidence(value)).toBeNull();
     },
   );
+});
+
+describe("pagos afirmados por el emisor", () => {
+  const holder = "8ZaNpA6oyqQwtupMqse9Br37ZRrBdRcC6DaM2R1gLKCi";
+
+  it("un nonce por titular, mes y tipo: el mismo mes no se registra dos veces", async () => {
+    const a = await statementNonceBytes(holder, "2024-10", "rent_payment", key);
+    expect(bytesEqual(a, await statementNonceBytes(holder, "2024-10", "rent_payment", key))).toBe(true);
+    expect(bytesEqual(a, await statementNonceBytes(holder, "2024-11", "rent_payment", key))).toBe(false);
+    expect(bytesEqual(a, await statementNonceBytes("Other1111111111111111111111111111", "2024-10", "rent_payment", key))).toBe(false);
+  });
+
+  it("nunca coincide con el nonce de una factura (espacios de nombres distintos)", () => {
+    expect(canonicalStatement(holder, "2024-09", "rent_payment").startsWith("issuer-statement|")).toBe(true);
+    expect(canonicalInvoice(invoice).startsWith("verifactu|")).toBe(true);
+  });
+
+  it("el compromiso depende de la sal", async () => {
+    const a = await statementCommitment(holder, "2024-10", "rent_payment", randomSalt());
+    const b = await statementCommitment(holder, "2024-10", "rent_payment", randomSalt());
+    expect(a).toHaveLength(32);
+    expect(bytesEqual(a, b)).toBe(false);
+  });
 });

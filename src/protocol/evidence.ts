@@ -40,13 +40,38 @@ export async function evidenceCommitment(invoice: VerifactuInvoice, salt: Uint8A
   return sha256(joined);
 }
 
-/** 32 bytes deterministas por factura y emisor. `key` sale de la clave privada del emisor (issuer.ts). */
-export async function invoiceNonceBytes(invoice: VerifactuInvoice, key: Uint8Array): Promise<Uint8Array> {
+/**
+ * Forma canónica de un pago afirmado por el emisor (sin factura): un pago por titular, mes y tipo.
+ * Registrar dos veces el mismo mes para el mismo titular choca igual que una factura repetida.
+ */
+export function canonicalStatement(holder: string, period: string, eventType: string): string {
+  return ["issuer-statement", "v1", holder, period, eventType].join("|");
+}
+
+async function hmac(message: string, key: Uint8Array): Promise<Uint8Array> {
   const hmacKey = await crypto.subtle.importKey("raw", key as BufferSource, { name: "HMAC", hash: "SHA-256" }, false, [
     "sign",
   ]);
-  const signature = await crypto.subtle.sign("HMAC", hmacKey, encoder.encode(canonicalInvoice(invoice)));
-  return new Uint8Array(signature);
+  return new Uint8Array(await crypto.subtle.sign("HMAC", hmacKey, encoder.encode(message)));
+}
+
+/** 32 bytes deterministas por factura y emisor. `key` sale de la clave privada del emisor (issuer.ts). */
+export function invoiceNonceBytes(invoice: VerifactuInvoice, key: Uint8Array): Promise<Uint8Array> {
+  return hmac(canonicalInvoice(invoice), key);
+}
+
+/** 32 bytes deterministas por titular, mes y tipo de pago afirmado por el emisor. */
+export function statementNonceBytes(holder: string, period: string, eventType: string, key: Uint8Array): Promise<Uint8Array> {
+  return hmac(canonicalStatement(holder, period, eventType), key);
+}
+
+/** Compromiso de un pago afirmado por el emisor: SHA-256(sal || registro). La sal la guarda el emisor. */
+export async function statementCommitment(holder: string, period: string, eventType: string, salt: Uint8Array): Promise<Uint8Array> {
+  const message = encoder.encode(canonicalStatement(holder, period, eventType));
+  const joined = new Uint8Array(salt.length + message.length);
+  joined.set(salt, 0);
+  joined.set(message, salt.length);
+  return sha256(joined);
 }
 
 export function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
