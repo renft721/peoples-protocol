@@ -12,7 +12,8 @@
     "setup:devnet": "tsx scripts/setup-devnet.ts",
     "demo:attest": "tsx scripts/demo-attest.ts",
     "withdraw": "tsx scripts/withdraw-attestation.ts",
-    "issuer:statements": "tsx scripts/issuer-statements.ts"
+    "issuer:statements": "tsx scripts/issuer-statements.ts",
+    "demo:prepare": "tsx scripts/demo-prepare.ts"
   },
   "dependencies": {
     "@solana/kit": "^5.5.1",

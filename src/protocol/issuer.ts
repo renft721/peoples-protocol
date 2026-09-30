@@ -20,7 +20,14 @@ import {
 } from "sas-lib";
 import { derivePilotAddresses } from "./addresses";
 import { DEMO_AGENCY_NIF, ISSUER_AUTHORITY } from "./config";
-import { evidenceCommitment, invoiceNonceBytes, randomSalt, statementCommitment, statementNonceBytes } from "./evidence";
+import {
+  evidenceCommitment,
+  invoiceNonceBytes,
+  invoiceSalt,
+  randomSalt,
+  statementCommitment,
+  statementNonceBytes,
+} from "./evidence";
 import type { AttestationData, EvidenceSource } from "./schema";
 import { getRpc, sendAndConfirm } from "./solana";
 import { invoicePeriod, type VerifactuInvoice } from "./verifactu";
@@ -110,7 +117,7 @@ export async function attestInvoice(invoice: VerifactuInvoice, options: { holder
   if (!isOwnInvoice(invoice)) throw new Error(`El emisor solo registra sus propias facturas (NIF ${DEMO_AGENCY_NIF})`);
 
   const { nonceKey } = await loadIssuer();
-  const salt = randomSalt();
+  const salt = await invoiceSalt(invoice, nonceKey);
   const source: EvidenceSource = invoice.environment === "production" ? "verifactu-aeat" : "verifactu-aeat-test";
   return publish(
     await invoiceNonceBytes(invoice, nonceKey),

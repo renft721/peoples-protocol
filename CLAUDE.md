@@ -12,6 +12,7 @@ Leer antes de tocar nada:
 - `Docs/DESIGN.md` — guía visual. Fuente de verdad para colores, tipografía, componentes y textos.
 - `Docs/plan.md` — plan por fases y **decisiones que corrigen o precisan** los dos documentos anteriores.
 - `Docs/bitacora.md` — qué se ha hecho, sesión a sesión.
+- `Docs/guion-demo.md` — guion de la demo, preparación y plan B. `Docs/pruebas-manuales.md` — lista de pruebas manuales.
 
 ## Stack
 
@@ -37,10 +38,13 @@ Leer antes de tocar nada:
 ## Solana devnet
 
 - Emisor, credencial y esquema: ver `src/protocol/config.ts` y la bitácora (Fase 1).
+- El emisor solo registra facturas con su propio NIF (`DEMO_AGENCY_NIF`, el de pruebas de la AEAT).
+- `/api/health?aeat=1` — chequeo previo a la demo (RPC en uso, saldo, clave, Hacienda).
 - `npm run setup:devnet` — alta idempotente (clave del emisor, SOL de prueba, credencial, esquema).
 - `npm run demo:attest` — prueba de punta a punta con la factura de ejemplo de la AEAT.
 - `npm run issuer:statements -- --holder <wallet> --from AAAA-MM --to AAAA-MM --yes` — pagos afirmados por el emisor (nivel de confianza bajo). Solo desde aquí, nunca desde la web.
-- `npm run withdraw -- <dirección|example> --yes` — retira una atestación. Si se retira la de ejemplo y se vuelve a registrar, actualizar `EXAMPLE_PROOF.evidence` en `src/protocol/config.ts` (la sal cambia).
+- `npm run demo:prepare -- --holder <wallet> --yes` — deja devnet lista para la demo en directo (ver guion).
+- `npm run withdraw -- <dirección|example> --yes` — retira una atestación. Retirar y volver a registrar la de ejemplo da el mismo enlace (la sal se deriva de la clave del emisor), así que `EXAMPLE_PROOF` no hay que tocarlo.
 - **No ejecutar `vercel env pull`**: sobrescribe `.env.local` y se perdería `ISSUER_SECRET_KEY`, que en Vercel es *sensitive* y no se puede recuperar.
 
 ## Comandos

@@ -121,3 +121,21 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 **Aviso operativo.** El RPC público de devnet devolvió «429 Too Many Requests» a mitad del lote. El script ahora pausa 3 s entre meses y, al relanzarlo, salta lo ya publicado (el mes que se quedó a medias sí se había registrado). **Hay que poner el RPC de Helius en Vercel antes de la demo** para no depender del límite público.
 
 **Pruebas manuales hechas (local).** Historial de la titular: 12 pruebas, resumen mixto, etiquetas correctas. Certificado de octubre de 2024 (emisor): sin importe, aviso correcto, botón al historial. Certificado de septiembre de 2024 (AEAT) sin cambios.
+
+## 1 de octubre de 2026 — Fase 3: preparación de la demo
+
+**Hecho.**
+
+- **Helius en producción.** Renato añadió `SOLANA_RPC_URL` en Vercel. `/api/health` confirma `rpcHost: devnet.helius-rpc.com`.
+- **`/api/health`** (`?aeat=1` para consultar también a Hacienda): RPC en uso (solo el nombre del servidor, nunca la clave), saldo del emisor, clave configurada y respuesta de Hacienda.
+- **El emisor solo registra facturas propias** (`DEMO_AGENCY_NIF` = 89890001K, el NIF de pruebas de la AEAT). Antes, la agencia ficticia habría «confirmado el pago» de cualquier factura real que alguien pegara (un tique de restaurante, por ejemplo). Nunca pasó, pero era un fallo de lógica y además el riesgo abierto de la Fase 1: ahora desde la web solo se puede registrar la factura de la agencia. El asistente avisa antes de intentar registrar («Hacienda la confirma, pero no la emitió esta agencia»).
+- **Sal de las facturas derivada de la clave del emisor** (`invoiceSalt`) en vez de aleatoria. Sigue sin poder calcularse desde fuera, pero es la misma para la misma factura: retirar y volver a registrar la de ejemplo da el mismo enlace. Comprobado dos veces en devnet. Así, después de una demo en directo, el certificado de ejemplo del inicio no se rompe. 2 tests nuevos (38 en total).
+- **Textos en inglés revisados** (calcos: «Concept» → «Description», «What is proven» → «What this proves», etc.).
+- **Documento del proyecto corregido**: sin programa Anchor, «código como ley» con la retirada visible, fechas de VeriFactu (2027), esquema de datos nuevo, stack (Next.js en Vercel), evidencia ficticia de la AEAT, tercer nivel de confianza, historial, criterios de aceptación cumplidos.
+- **`Docs/guion-demo.md`**: 4 minutos en inglés, preparación, plan B. **`Docs/pruebas-manuales.md`**: lista completa. **`npm run demo:prepare`**: publica los 11 meses del emisor para la titular, retira la de ejemplo para registrarla en directo y comprueba Hacienda y el saldo.
+
+**Pendiente.**
+
+- Wallet «María (demo)» en el Phantom de Renato. Con su dirección: `DEMO_HOLDER` nuevo, `demo:prepare`, y retirar los 11 meses de la titular ficticia actual (`8ZaN…LKCi`) para dejar limpio.
+- Deck: alinear con el documento corregido.
+- Fase 4: vídeo, README del SDK, envío.

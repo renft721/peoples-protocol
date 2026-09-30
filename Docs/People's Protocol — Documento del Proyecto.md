@@ -2,19 +2,19 @@
 
 *Colosseum Crypto World's Fair 2026 · Heavy Duty Builders*
 
-Sep 30, 2026 · @Ren3
+Sep 30, 2026 · @Ren3 · *actualizado el 1 de octubre de 2026 con lo aprendido al construir el piloto (detalle en `Docs/plan.md`)*
 
 ## Resumen ejecutivo
 
-**People's Protocol no es una app: es infraestructura.** Es un protocolo abierto que vive en Solana (un programa on-chain) más un SDK público para consultarlo. La página web con la que interactúa una persona es solo el *cliente de demostración* que construimos para el hackathon — la prueba de que el protocolo funciona, no el activo en sí.
+**People's Protocol no es una app: es infraestructura.** Es un protocolo abierto que vive en Solana (un esquema público de atestaciones en Solana Attestation Service) más un SDK público para consultarlo. La página web con la que interactúa una persona es solo el *cliente de demostración* que construimos para el hackathon — la prueba de que el protocolo funciona, no el activo en sí.
 
 El valor no está en esa interfaz, sino en tres capas que se acumulan detrás de ella:
 
-1. **El programa on-chain (Anchor + Solana Attestation Service).** Las reglas — qué cuenta como una atestación válida, cómo se evita duplicar una misma factura — quedan fijadas en código público e inmutable, no en el servidor de una empresa.
+1. **Las reglas on-chain (Solana Attestation Service).** Las reglas — qué cuenta como una atestación válida, cómo se evita duplicar una misma factura — quedan fijadas en código público, no en el servidor de una empresa. En el piloto no hace falta un programa Anchor propio: la dirección de cada atestación se calcula a partir de la propia factura, así que registrarla dos veces es imposible.
 2. **El registro de evidencia que se va acumulando.** Cada atestación nueva aumenta el valor del conjunto: cuantas más personas registren su historial, más útil es el protocolo para quien verifica.
 3. **El SDK abierto.** Cualquier plataforma — un banco, una agencia inmobiliaria, otro proyecto — puede integrarlo para emitir o consultar atestaciones sin pedirnos permiso ni pasar por nuestra app.
 
-Para el piloto sí construimos una app — una página donde alguien genera su prueba (zkTLS o VeriFactu) y otra donde cualquiera consulta un histórico —, pero es deliberadamente fina: existe para que los jueces "vean la cosa funcionar" de extremo a extremo, no para ser el producto final.
+Para el piloto sí construimos una app — una página donde alguien genera su prueba (VeriFactu; zkTLS queda para más adelante), otra donde cualquiera la comprueba y otra con el histórico de una persona —, pero es deliberadamente fina: existe para que los jueces "vean la cosa funcionar" de extremo a extremo, no para ser el producto final.
 
 ## El problema
 
@@ -45,7 +45,7 @@ Cada flecha es una transacción o una llamada de API — ninguna requiere permis
 
 - **Evidencia real**: el pago de alquiler, la nómina o la factura ocurre en el banco, en HR o en el sistema de facturación.
 - **Prueba de origen**: Reclaim Protocol (zkTLS) para portales con sesión, o el QR de VeriFactu para facturas españolas.
-- **Registro on-chain**: un programa Anchor guarda la evidencia en una PDA única, y emite la atestación vía Solana Attestation Service (SAS).
+- **Registro on-chain**: la atestación se publica en Solana Attestation Service (SAS) en una dirección única derivada de la evidencia (sin programa propio), así que la misma evidencia no se registra dos veces.
 - **Verificación**: cualquiera con el identificador puede comprobar la atestación en Solana, sin pedir permiso a nadie.
 
 **Para el piloto (v1):** la evidencia se consigue con VeriFactu, no con zkTLS. La explicación de zkTLS de la sección siguiente ("En detalle") describe el mecanismo para más adelante, cuando no hay una factura de por medio — ver "Especificación funcional mínima" y "El escenario ideal en producción".
@@ -86,8 +86,8 @@ Antes de tocar una cadena, aplicamos un test de cuatro propiedades: si ninguna a
 
 | Propiedad | Qué significa aquí |
 | --- | --- |
-| Código como ley | Nadie — ni el equipo, ni un emisor — puede revocar o alterar una atestación ya emitida |
-| Inmutabilidad | El historial no puede reescribirse retroactivamente para inflar o borrar una reputación |
+| Código como ley | Nadie — ni el equipo, ni un emisor — puede alterar una atestación ya emitida. El emisor puede retirarla, pero la retirada queda registrada públicamente: no se puede hacer a escondidas |
+| Inmutabilidad | El historial no puede reescribirse retroactivamente para inflar o borrar una reputación: hasta una retirada deja rastro público |
 | Trazabilidad pública | Cualquiera puede auditar cuándo y por quién se emitió cada atestación |
 | Portabilidad neutral | Un casero y un banco competidores verifican el mismo dato sin que ninguno controle la plataforma del otro |
 
@@ -128,7 +128,7 @@ No, y esa es la clave: **no necesitamos que Hacienda ni ningún banco nos den ac
 2. **El sistema de origen** (el banco, la AEAT, la plataforma de alquiler) no se entera de que existimos ni tiene que cooperar. Con VeriFactu en concreto, no nos integramos EN Hacienda: Hacienda ya publica un servicio público de verificación de facturas (el QR) abierto a cualquiera, y nosotros simplemente lo consultamos — igual que lo haría un ciudadano a mano. Es leer algo ya público, no una integración con el Estado.
 3. **Quien verifica** (el casero, el banco, la aseguradora) es la única parte que, en producción madura, podría llegar a integrarse de verdad — añadiendo un botón de "comprobar en People's Protocol" a su propio software con nuestro SDK abierto. Eso es opcional y lo decide cada verificador a su ritmo; no depende de que nosotros lo negociemos caso por caso.
 
-**El techo real, con honestidad:** VeriFactu ya es obligatorio desde 2026 — para empresas desde enero, para autónomos y pymes desde julio —, así que hoy ya genera evidencia real cualquiera que facture bajo el sistema, no es una promesa a futuro. Y si algún día quisiéramos emitir nosotros mismos atestaciones de "sin incidencias" (no solo "esta factura existe"), ahí sí necesitaríamos convertirnos en un emisor con credencial SAS propia — lo que implica pasar nuestro propio KYC. Eso es un paso de fase 2, no algo necesario para el piloto.
+**El techo real, con honestidad:** VeriFactu será obligatorio en 2027 — para sociedades desde el 1 de enero, para autónomos y el resto desde el 1 de julio (el Real Decreto-ley 15/2025 lo aplazó un año) —; hasta entonces su uso es voluntario. Genera evidencia real para cualquiera que ya facture con él, y en 2027 será la norma. Y si algún día quisiéramos emitir nosotros mismos atestaciones de "sin incidencias" (no solo "esta factura existe"), ahí sí necesitaríamos convertirnos en un emisor con credencial SAS propia — lo que implica pasar nuestro propio KYC. Eso es un paso de fase 2, no algo necesario para el piloto.
 
 ## El piloto del hackathon
 
@@ -139,12 +139,14 @@ Es un piloto: todo lo que construimos para el hackathon corre a coste cero, sobr
 | Componente | Qué hace | Coste |
 | --- | --- | --- |
 | Solana Attestation Service (SAS) | Credencial, schema y atestaciones — sin programa propio; se usa directamente con su SDK oficial | Gratis |
+| Pagos afirmados por el emisor | Tercer nivel de confianza: la agencia publica pagos desde su propio sistema, sin comprobación externa, y así se etiqueta | Gratis |
 | VeriFactu (AEAT) | Verifica públicamente que una factura real existe y fue declarada a Hacienda | Gratis (servicio público) |
 | Emisor propio de demo | El equipo simula el rol de agencia inmobiliaria / administradora de fincas para la demo de extremo a extremo | Gratis (dato propio) |
-| Página de verificación | Introduces un identificador y ves la atestación on-chain | Gratis (hosting estático) |
+| Página de verificación | Introduces un identificador y ves la atestación on-chain | Gratis (Vercel) |
+| Historial por titular | Todas las pruebas ligadas a una wallet, con su nivel de confianza | Gratis (Vercel) |
 | Proveedor de RPC | Helius o RPC Fast, plan gratuito | Gratis |
 
-El piloto demuestra el mecanismo completo con datos reales del equipo — no simulados — sin gastar un euro.
+El piloto demuestra el mecanismo completo con datos ficticios pero comprobables — la factura de ejemplo que publica la propia AEAT — sin gastar un euro.
 
 ### Fase 2: qué se deja para después
 
@@ -172,41 +174,46 @@ Con esto cerrado, el documento ya tiene lo mínimo que hace falta para pasarlo a
 6. En la página de verificación, cualquiera introduce ese identificador y ve: emisor, tipo de evento, periodo y un enlace a Solana Explorer (devnet).
 7. Si el identificador no existe, la página muestra "no encontrado", sin fallar.
 
-### Fuente de la evidencia: factura VeriFactu real (o de pruebas)
+### Fuente de la evidencia: factura de ejemplo de la AEAT (decidido: todo ficticio)
 
-**Opción preferida:** un miembro del equipo que sea autónomo emite una factura real (por un importe simbólico, por un servicio cualquiera entre el equipo) bajo el sistema VeriFactu. Al ser una factura, está pensada por ley para ser pública — no expone nada sensible, a diferencia de un extracto bancario.
+**Decisión final (30-09-2026):** todo ficticio. Se usa la factura de ejemplo que publica la propia AEAT (NIF de pruebas 89890001K, 241,40 €), que la página pública de validación responde como «Encontrada»: cualquier juez puede comprobarla. La agencia ficticia usa ese NIF y solo registra sus propias facturas.
+
+~~**Opción preferida:** un miembro del equipo que sea autónomo emite una factura real (por un importe simbólico, por un servicio cualquiera entre el equipo) bajo el sistema VeriFactu. Al ser una factura, está pensada por ley para ser pública — no expone nada sensible, a diferencia de un extracto bancario.~~
 
 **Alternativa 100% de pruebas:** si no es posible conseguir una factura real a tiempo, la AEAT ofrece un entorno de pruebas (sandbox) para desarrolladores. Es completamente ficticio y sin ningún riesgo, con una salvedad: los datos de prueba no aparecen en la consulta pública real, así que un verificador externo no podría comprobarlo por su cuenta durante la demo.
 
 ### Esquema de datos de la atestación
 
+*Actualizado: el esquema original guardaba el hash del identificador del usuario y el código de la factura en claro. El primero se revierte en minutos (solo hay ~100 millones de DNI posibles) y el segundo publicaba el NIF y el importe. Detalle en `Docs/plan.md`, decisión 5.*
+
 | Campo | Qué contiene |
 | --- | --- |
-| `issuer` | Clave pública de la credencial del emisor (la agencia demo) |
-| `subject_hash` | Hash del identificador del usuario — nunca el dato en claro |
 | `event_type` | Tipo de evento, por ejemplo "rent\_payment" |
-| `period` | Periodo al que corresponde el evento (mes/año) |
-| `verification_ref` | Código de verificación VeriFactu de la factura, para vincular la atestación a esa factura concreta |
+| `period` | Mes al que corresponde el evento (AAAA-MM) |
+| `evidence_source` | De dónde sale la prueba: factura VeriFactu comprobada por la AEAT, o pago afirmado por el emisor (nivel de confianza) |
+| `evidence_commitment` | Huella SHA-256 de los datos de la factura más una «sal» aleatoria. Los datos y la sal solo viajan en el enlace que comparte el titular |
+| `payment_confirmed` | Que el emisor afirma el pago (Hacienda solo confirma que la factura existe) |
+| `holder` | Wallet del titular, si decidió ligarla; vacío si no |
 | `issued_at` | Fecha y hora de emisión |
 
-Nada de importes ni datos personales en claro queda on-chain.
+El emisor no va como campo: la credencial SAS del emisor ya forma parte de la atestación. Nada de importes, NIF ni datos personales en claro queda on-chain.
 
 ### Programa on-chain: ninguno propio
 
-No hace falta escribir, auditar ni desplegar un programa Anchor. Se usa directamente el SDK oficial de Solana Attestation Service: `create_credential` (una vez, para registrar a la agencia demo como emisor), `create_schema` (una vez, para el esquema de arriba) y `create_attestation` (una vez por cada evento publicado).
+No hace falta escribir, auditar ni desplegar un programa Anchor. Se usa directamente el SDK oficial de Solana Attestation Service: `create_credential` (una vez, para registrar a la agencia demo como emisor), `create_schema` (una vez, para el esquema de arriba) y `create_attestation` (una vez por cada evento publicado). El antiduplicado sale de la dirección de cada atestación, que SAS calcula a partir de un valor derivado de la propia factura.
 
 ### Stack del front de la demo
 
-Una sola página HTML/JS, sin framework, usando `@solana/web3.js` y un adaptador de wallet por CDN. Alojada gratis en GitHub Pages o Cloudflare Pages. Dos vistas, ambas en inglés (el hackathon se presenta en inglés): una para que la agencia demo introduzca el código de una factura VeriFactu y publique la atestación, y otra pública de verificación por identificador.
+*Actualizado:* Next.js con TypeScript, alojado gratis en Vercel. Una página HTML suelta no basta: la consulta a Hacienda tiene que hacerse desde un servidor (el navegador bloquea las peticiones a otra web) y la clave con la que firma el emisor tiene que quedar oculta. Interfaz en inglés y en español. Vistas: inicio, generar prueba (asistente de 4 pasos), comprobar una prueba (certificado) e historial por titular.
 
 ### Criterios de aceptación del MVP
 
-- [ ] Al menos una factura real verificada contra la Sede Electrónica de la AEAT (o, como alternativa, el entorno de pruebas de la AEAT)
-- [ ] Atestación publicada en SAS (devnet), visible en Solana Explorer
-- [ ] Página de verificación funcionando en vivo, con caso positivo y caso negativo
-- [ ] Todo el flujo se ejecuta sin tocar la cadena a mano durante la demo
-- [ ] Toda la interfaz (textos, botones, mensajes) en inglés — el hackathon se presenta en inglés
-- [ ] Coste total: 0 €
+- [x] Al menos una factura verificada contra la Sede Electrónica de la AEAT (la de ejemplo de la AEAT)
+- [x] Atestación publicada en SAS (devnet), visible en Solana Explorer
+- [x] Página de verificación funcionando en vivo, con caso positivo y caso negativo
+- [x] Todo el flujo se ejecuta sin tocar la cadena a mano durante la demo
+- [x] Toda la interfaz (textos, botones, mensajes) en inglés — y también en español
+- [x] Coste total: 0 €
 
 ## El escenario ideal en producción (visión a futuro — no aplica al desarrollo del piloto)
 
@@ -226,17 +233,17 @@ Para un inquilino con un casero particular sin gestión profesional, existe una 
 
 Para todo lo que no tiene ni emisor institucional integrado ni pasa por un banco sujeto a Open Banking (reseñas de Airbnb, trabajo informal, un banco fuera de la UE), zkTLS sigue siendo la vía — con la fricción ya descrita, suavizada con mejores modos de integración (extensión de navegador, agrupar varios meses en una sola sesión).
 
-**En una frase:** en producción madura, la mayoría de las atestaciones las publican instituciones verificadas de forma automática; zkTLS y Open Banking cubren, cada uno a su manera, los huecos donde no hay una institución integrada detrás. El piloto del hackathon solo necesita demostrar el mecanismo más difícil (zkTLS) funcionando; la vector de crecimiento real es la adopción institucional, no que millones de individuos repitan un login cada mes.
+**En una frase:** en producción madura, la mayoría de las atestaciones las publican instituciones verificadas de forma automática; zkTLS y Open Banking cubren, cada uno a su manera, los huecos donde no hay una institución integrada detrás. El piloto del hackathon demuestra el mecanismo con VeriFactu (zkTLS queda para más adelante) y enseña ya el camino institucional con los pagos afirmados por el emisor; el vector de crecimiento real es la adopción institucional, no que millones de individuos repitan un login cada mes.
 
 ## Próximos pasos
 
 - [x] Emisor de demo: el equipo simula la agencia inmobiliaria/administradora de fincas (decidido; ver tabla del MVP).
-- [ ] Conseguir una factura real bajo VeriFactu de un miembro del equipo autónomo (o, si no da tiempo, usar el entorno de pruebas de la AEAT como alternativa 100% ficticia).
+- [x] Evidencia: todo ficticio, con la factura de ejemplo de la AEAT (decidido el 30-09-2026).
 - [x] Alcance del día 1: solo VeriFactu (decidido) — zkTLS queda para más adelante (ver Escenario ideal).
-- [ ] Proveedor de RPC: Helius (decidido) — falta crear la cuenta.
+- [x] Proveedor de RPC: Helius, configurado en Vercel (01-10-2026).
 - [ ] Revisar la pestaña "Resources" de Colosseum (RPC providers, sponsored tools, wallets, development setup) antes de escribir código
 - [ ] Decidir si se quiere añadir administración pública como una tercera audiencia (fuera del alcance del piloto actual)
-- [ ] Traducir toda la interfaz de la demo al inglés antes de la presentación (el hackathon se presenta en inglés)
+- [x] Interfaz completa en inglés y español.
 
 ### Enlaces
 

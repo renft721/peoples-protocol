@@ -32,13 +32,14 @@ export const SCHEMA_DESCRIPTION =
  * registrada el 01-10-2026 con `npm run demo:attest -- --holder <titular>` y ligada a la wallet
  * de una titular ficticia (DEMO_HOLDER), para que su historial tenga contenido.
  * La evidencia incluye la sal: son datos ficticios y públicos a propósito, para que
- * cualquiera pueda abrir el certificado completo. Si se retira y se vuelve a registrar,
- * la dirección no cambia pero la evidencia sí: hay que actualizarla aquí.
+ * cualquiera pueda abrir el certificado completo. La sal se deriva de la clave del emisor
+ * (invoiceSalt), así que retirar y volver a registrar la factura da la misma evidencia:
+ * no hay que tocar esto después de una demo en directo.
  */
 export const EXAMPLE_PROOF = {
   attestation: "HmD3Qv7bvL6Y3wtDZ6KZ5LpYGnJAkH8sg98yEHqy9hwM",
   evidence:
-    "eyJuIjoiODk4OTAwMDFLIiwicyI6IjEyMzQ1Njc4LUczMyIsImYiOiIwMS0wOS0yMDI0IiwiaSI6IjI0MS40MCIsImUiOiJwIiwiayI6IkFTemFmNTF6TVh4ZWFibGVuYi1QZkEifQ",
+    "eyJuIjoiODk4OTAwMDFLIiwicyI6IjEyMzQ1Njc4LUczMyIsImYiOiIwMS0wOS0yMDI0IiwiaSI6IjI0MS40MCIsImUiOiJwIiwiayI6IlhrT3FEdm1ady16R3hJVVZHc1EyVUEifQ",
   amount: "241.40",
 };
 
