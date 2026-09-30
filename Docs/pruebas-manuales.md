@@ -64,3 +64,4 @@ Formato: **qué hacer → qué debe pasar**. Última pasada completa: ver la tab
 | Fecha | Dónde | Resultado |
 |---|---|---|
 | 01-10-2026 | Local y producción | Todas en verde salvo W2/W3, probadas por Renato (W2 ok). G2 comprobado por API (`not_issuer_invoice`). |
+| 01-10-2026 | Producción | **Ensayo real**: retirada la de ejemplo → G3 y G4 desde la web publicada (Hacienda 1,2 s, registro en Solana 2 s) → «Your proof is ready» con el mismo enlace de siempre → C1 correcto. Después, septiembre devuelto a María. **N5** (teclado): orden lógico, «Skip to content» primero, foco visible de 3 px en todos los controles. |
