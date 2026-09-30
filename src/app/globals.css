@@ -1,0 +1,211 @@
+/* Tokens de diseño: copiados tal cual de Docs/DESIGN.md §3 (dirección C, "Cívica").
+   No añadir colores, tamaños ni radios que no estén ahí. */
+:root {
+  /* Color */
+  --fondo: #FAF7F2;
+  --superficie: #FFFDF9;
+  --superficie-input: #FFFFFF;
+  --borde: #E6DFD2;
+  --borde-fuerte: #D9CFBC;
+  --texto: #1F2A1F;
+  --texto-suave: #4A5243;
+  --texto-tenue: #5E6655;
+  --primario: #1E5B3A;
+  --primario-texto: #FFFFFF;
+  --acento: #8A5A12;            /* etiquetas y sobretítulos */
+  --verificado-fondo: #E3EFE7;
+  --verificado-texto: #154429;
+  --aviso-fondo: #F6EAD2;       /* nivel de confianza / avisos */
+  --aviso-titulo: #6B430B;
+  --devnet: #B7791F;
+
+  /* Tipografía: las variables --font-serif y --font-sans las pone next/font en el layout */
+  --fuente-titulo: var(--font-serif), 'Source Serif 4', Georgia, serif;
+  --fuente-texto: var(--font-sans), 'Source Sans 3', system-ui, sans-serif;
+
+  /* Forma */
+  --radio: 10px;
+  --radio-boton: 12px;
+  --radio-pildora: 999px;
+  --sombra: none;               /* el estilo C no usa sombras */
+
+  /* Espaciado (DESIGN.md §3, "Espaciado") */
+  --margen-pagina: 64px;
+  --aire-seccion: 96px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --margen-pagina: 16px;
+    --aire-seccion: 56px;
+  }
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--fuente-titulo);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--texto);
+}
+
+a:hover {
+  color: var(--primario);
+}
+
+/* Foco de teclado visible en todos los controles (DESIGN.md §9) */
+:focus-visible {
+  outline: 3px solid var(--primario);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--margen-pagina);
+  top: -100px;
+  z-index: 100;
+  background: var(--primario);
+  color: var(--primario-texto);
+  padding: 12px 20px;
+  border-radius: var(--radio);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 12px;
+  color: var(--primario-texto);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Componentes (DESIGN.md §4) ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 54px;
+  padding: 0 28px;
+  border-radius: var(--radio-boton);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primario);
+  color: var(--primario-texto);
+  border: 0;
+}
+
+.btn-primary:hover {
+  color: var(--primario-texto);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--texto);
+  border: 1.5px solid var(--texto);
+}
+
+.btn-secondary:hover {
+  color: var(--texto);
+}
+
+.btn-bar {
+  min-height: 44px;
+  padding: 0 22px;
+  font-size: 16px;
+}
+
+.eyebrow {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--acento);
+}
+
+.card {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 24px;
+}
+
+.pill-devnet {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-tenue);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-pildora);
+  padding: 7px 14px;
+  white-space: nowrap;
+}
+
+.pill-devnet::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--devnet);
+}
+
+/* ---------- Página ---------- */
+
+.page {
+  padding: 48px var(--margen-pagina) var(--aire-seccion);
+}
+
+.page-narrow {
+  max-width: 1040px;
+  margin: 0 auto;
+}
