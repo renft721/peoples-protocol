@@ -1,0 +1,151 @@
+/* Barra superior (DESIGN.md §5): alto 76 px, borde inferior --borde. */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 76px;
+  padding: 0 var(--margen-pagina);
+  border-bottom: 1px solid var(--borde);
+  background: var(--fondo);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  height: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  text-decoration: none;
+  color: var(--texto);
+  font-family: var(--fuente-titulo);
+  font-weight: 700;
+  font-size: 21px;
+  white-space: nowrap;
+}
+
+.desktopNav {
+  height: 100%;
+}
+
+.desktopNav ul,
+.mobileNav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.desktopNav ul {
+  display: flex;
+  gap: 30px;
+  height: 100%;
+}
+
+.desktopNav a {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--texto);
+  border-bottom: 2px solid transparent;
+  border-top: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.desktopNav a.active,
+.mobileNav a.active {
+  color: var(--primario);
+  border-bottom-color: var(--primario);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.language {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto-suave);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.menuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.mobileNav {
+  position: absolute;
+  top: 76px;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--borde);
+  padding: 8px var(--margen-pagina) 16px;
+}
+
+.mobileNav a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.mobileNav .language {
+  text-decoration: underline;
+}
+
+/* Por debajo de 1100 px la navegación completa no cabe: menú colapsado. */
+@media (max-width: 1099px) {
+  .desktopNav,
+  .desktopOnly {
+    display: none;
+  }
+
+  .menuButton {
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 1100px) {
+  .mobileNav {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand {
+    font-size: 18px;
+  }
+
+  .right {
+    gap: 10px;
+  }
+}
