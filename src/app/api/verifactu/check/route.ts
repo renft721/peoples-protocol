@@ -1,4 +1,5 @@
 import { AeatUnavailableError, checkInvoiceWithAeat } from "@/protocol/aeat";
+import { isOwnInvoice } from "@/protocol/issuer";
 import { invoicePeriod, parseVerifactuQr } from "@/protocol/verifactu";
 
 // Paso 2 del asistente: comprobar la factura contra la AEAT, sin registrar nada todavía.
@@ -19,6 +20,8 @@ export async function POST(request: Request) {
       verdict,
       invoice: parsed.invoice,
       period: invoicePeriod(parsed.invoice),
+      /** Si es false, Hacienda puede confirmarla, pero esta agencia no la registrará: no la emitió ella. */
+      issuerAccepts: isOwnInvoice(parsed.invoice),
     });
   } catch (error) {
     if (error instanceof AeatUnavailableError) return Response.json({ error: "aeat_unavailable" }, { status: 502 });

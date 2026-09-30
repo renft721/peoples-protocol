@@ -1,5 +1,5 @@
 import { AeatUnavailableError, checkInvoiceWithAeat } from "@/protocol/aeat";
-import { attestInvoice } from "@/protocol/issuer";
+import { attestInvoice, isOwnInvoice } from "@/protocol/issuer";
 import { encodeEvidence } from "@/protocol/link";
 import { parseVerifactuQr } from "@/protocol/verifactu";
 
@@ -23,6 +23,8 @@ export async function POST(request: Request) {
 
   const parsed = parseVerifactuQr(body.qr);
   if (!parsed.ok) return Response.json({ error: parsed.error }, { status: 422 });
+  // La agencia solo da fe de sus propias facturas (antes de preguntar a Hacienda: no hace falta).
+  if (!isOwnInvoice(parsed.invoice)) return Response.json({ error: "not_issuer_invoice" }, { status: 422 });
 
   let verdict;
   try {
