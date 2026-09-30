@@ -105,3 +105,19 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 **Limitación de datos (pendiente de decisión de Renato).** Con una sola factura de la AEAT que responda «Encontrada», el historial de ejemplo tiene 1 prueba. Opción propuesta: un tercer nivel de confianza, «afirmado por el emisor, sin comprobación de Hacienda». Encaja con el escenario 1 del documento (la agencia publica en lote) y permitiría enseñar un historial de 12 meses con niveles de confianza mezclados, siempre etiquetados.
 
 **Pruebas manuales hechas (local).** Certificado de ejemplo → «Ver el historial de pagos del titular» → historial con 1 prueba y resumen correcto. Wallet sin pruebas → estado vacío. Dirección no válida → aviso.
+
+## 1 de octubre de 2026 — Tercer nivel de confianza: «afirmado por el emisor» (decisión 11)
+
+**Hecho.**
+
+- Origen `issuer-statement` en el esquema (es un texto, así que el esquema de SAS no cambia). Nonce `HMAC(clave, "issuer-statement|v1|titular|mes|tipo")`: un pago por titular y mes. Compromiso con sal que guarda el emisor. 3 tests nuevos (36 en total).
+- `attestIssuerStatement()` en `issuer.ts` (comparte el envío con las facturas) y `npm run issuer:statements -- --holder <wallet> --from AAAA-MM --to AAAA-MM --yes`. Sin ruta de API pública.
+- Certificado hecho a partir de datos: el modelo (`lib/certificate-model.ts`) decide campos, «Qué se demuestra», recorrido y nivel de confianza según el origen. Para `issuer-statement`: importe «No incluido», mes en vez de fecha de factura, solo «Pago confirmado por…», aviso «vale lo que valga la confianza en ese emisor».
+- Historial: resumen mixto («1 con factura comprobada por Hacienda · 11 solo afirmados por el emisor») y etiqueta de confianza en cada prueba.
+- Inicio: «Niveles de confianza» con tres orígenes (VeriFactu, Afirmado por el emisor, zkTLS próximamente) y pregunta frecuente nueva.
+
+**Devnet.** Publicados de octubre de 2024 a agosto de 2025 para la titular ficticia `8ZaN…LKCi`. Junto con septiembre de 2024 (factura de la AEAT), su historial tiene 12 meses.
+
+**Aviso operativo.** El RPC público de devnet devolvió «429 Too Many Requests» a mitad del lote. El script ahora pausa 3 s entre meses y, al relanzarlo, salta lo ya publicado (el mes que se quedó a medias sí se había registrado). **Hay que poner el RPC de Helius en Vercel antes de la demo** para no depender del límite público.
+
+**Pruebas manuales hechas (local).** Historial de la titular: 12 pruebas, resumen mixto, etiquetas correctas. Certificado de octubre de 2024 (emisor): sin importe, aviso correcto, botón al historial. Certificado de septiembre de 2024 (AEAT) sin cambios.

@@ -302,7 +302,7 @@ a:hover {
   white-space: nowrap;
 }
 
-.badge-soon {
+.badge-caution {
   display: inline-flex;
   align-items: center;
   font-size: 13px;

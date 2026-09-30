@@ -145,7 +145,7 @@ export function GenerateWizard({ lang, t }: { lang: Locale; t: T }) {
               <label className={`${styles.source} ${styles.sourceDisabled}`}>
                 <input type="radio" name="source" value="portal" disabled className="visually-hidden" />
                 <span className={styles.sourceTitle}>
-                  {g.source.portalTitle} <span className="badge-soon">{t.common.comingSoon}</span>
+                  {g.source.portalTitle} <span className="badge-caution">{t.common.comingSoon}</span>
                 </span>
                 <span className={styles.sourceBody}>{g.source.portalBody}</span>
                 <span className={styles.sourceBody}>{g.source.portalSoon}</span>

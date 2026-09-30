@@ -2,25 +2,24 @@
 // recorrido, nivel de confianza y, si hay enlace completo, si sus datos cuadran con la huella.
 import type { ReactNode } from "react";
 import type { Dictionary } from "@/i18n/dictionaries/en";
-import { fill } from "@/lib/format";
-import type { EvidenceSource } from "@/protocol/schema";
 import { CheckIcon, Notice, VerifiedBadge } from "./ui";
 
 export type EvidenceState = "match" | "mismatch" | "absent";
 
+export type CertificateField = { label: string; value: string; note?: string };
+
 export type CertificateModel = {
   eyebrow: string;
   title: string;
-  concept: string;
-  issuer: string;
-  /** Importe ya formateado; null si no hay enlace completo (o no cuadra). */
-  amount: string | null;
-  invoiceDate: string | null;
-  /** Fecha de publicación en Solana, ya formateada. */
-  publishedOn: string;
-  source: EvidenceSource;
-  paymentConfirmed: boolean;
-  /** null en el certificado de ejemplo del inicio: no se muestra el aviso de evidencia. */
+  /** Los cuatro datos de la fila central (importe, concepto, fecha/mes, emisor). */
+  fields: CertificateField[];
+  /** "Qué se demuestra": afirmaciones con check. */
+  claims: string[];
+  /** Recorrido de la prueba, ya con fechas rellenas. */
+  trail: string[];
+  /** Nivel de confianza (DESIGN.md §8): una o varias frases según el origen. */
+  trust: string[];
+  /** Aviso sobre la evidencia del enlace; null si no aplica (ejemplo, o prueba sin factura). */
   evidence: EvidenceState | null;
   technical?: { address: string; credential: string; schema: string; signer: string; commitment: string; holder: string };
 };
@@ -36,12 +35,6 @@ type Props = {
 export function Certificate({ model, t, actions, titleLevel = 2 }: Props) {
   const c = t.certificate;
   const Title = titleLevel === 1 ? "h1" : "h2";
-  const hidden = (
-    <>
-      {c.hidden}
-      <small>{c.hiddenHint}</small>
-    </>
-  );
 
   return (
     <article className="certificate">
@@ -58,22 +51,15 @@ export function Certificate({ model, t, actions, titleLevel = 2 }: Props) {
         </header>
 
         <dl className="data-grid">
-          <div>
-            <dt>{c.amount}</dt>
-            <dd>{model.amount ?? hidden}</dd>
-          </div>
-          <div>
-            <dt>{c.concept}</dt>
-            <dd>{model.concept}</dd>
-          </div>
-          <div>
-            <dt>{c.date}</dt>
-            <dd>{model.invoiceDate ?? hidden}</dd>
-          </div>
-          <div>
-            <dt>{c.issuer}</dt>
-            <dd>{model.issuer}</dd>
-          </div>
+          {model.fields.map((field) => (
+            <div key={field.label}>
+              <dt>{field.label}</dt>
+              <dd>
+                {field.value}
+                {field.note && <small>{field.note}</small>}
+              </dd>
+            </div>
+          ))}
         </dl>
 
         {model.evidence && (
@@ -88,32 +74,30 @@ export function Certificate({ model, t, actions, titleLevel = 2 }: Props) {
             <section style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <h3 style={{ fontSize: 18 }}>{c.claimsTitle}</h3>
               <ul className="check-list">
-                <li>
-                  <CheckIcon />
-                  {c.invoiceVerified}
-                </li>
-                {model.paymentConfirmed && (
-                  <li>
+                {model.claims.map((claim) => (
+                  <li key={claim}>
                     <CheckIcon />
-                    {fill(c.paymentConfirmed, { issuer: model.issuer })}
+                    {claim}
                   </li>
-                )}
+                ))}
               </ul>
             </section>
             <section style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <h3 style={{ fontSize: 18 }}>{c.trailTitle}</h3>
               <ol className="dot-list">
-                {c.trail.map((step) => (
-                  <li key={step}>{fill(step, { date: model.publishedOn })}</li>
+                {model.trail.map((step) => (
+                  <li key={step}>{step}</li>
                 ))}
               </ol>
             </section>
           </div>
           <div style={{ alignSelf: "flex-start" }}>
             <Notice title={c.trustTitle}>
-              <p style={{ fontSize: 15, lineHeight: 1.55 }}>{c.trust.verifactu}</p>
-              <p style={{ fontSize: 15, lineHeight: 1.55 }}>{c.trust.payment}</p>
-              {model.source === "verifactu-aeat-test" && <p style={{ fontSize: 15, lineHeight: 1.55 }}>{c.trust.testEnvironment}</p>}
+              {model.trust.map((line) => (
+                <p key={line} style={{ fontSize: 15, lineHeight: 1.55 }}>
+                  {line}
+                </p>
+              ))}
             </Notice>
           </div>
         </div>

@@ -86,12 +86,12 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           <h2 id="trust-title">{h.trust.title}</h2>
           <p>{h.trust.lead}</p>
         </div>
-        <ul className={styles.twoCols}>
-          {h.trust.sources.map((source, index) => (
+        <ul className={styles.threeCols}>
+          {h.trust.sources.map((source) => (
             <li key={source.name} className="card">
               <div className={styles.sourceHead}>
                 <h3 className={styles.cardTitle}>{source.name}</h3>
-                {index === 0 ? <VerifiedBadge label={source.status} /> : <span className="badge-soon">{source.status}</span>}
+                {source.available ? <VerifiedBadge label={source.status} /> : <span className="badge-caution">{source.status}</span>}
               </div>
               <div className="notice" style={{ marginTop: 14 }}>
                 <p className={styles.cardBody} style={{ color: "var(--texto)" }}>
