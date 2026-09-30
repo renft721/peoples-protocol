@@ -152,3 +152,9 @@ Las contradicciones encontradas y cómo se resuelven están en `Docs/plan.md` (�
 - **README en inglés** para los jueces: problema, capas, cómo se hace una prueba, niveles de confianza, privacidad, direcciones del protocolo, esquema, API, ejecución local, limitaciones.
 
 **Pendiente (Renato).** Vídeo de la demo, licencia del repositorio y envío a Colosseum antes del 12 de octubre. Opcional: versión del deck en inglés.
+
+## 1 de octubre de 2026 — Licencia y validación final
+
+- Licencia **MIT** (`LICENSE`, © 2026 Heavy Duty Builders), aprobada por Renato.
+- **Ensayo real en producción** del registro desde la web (la única ruta que solo se había probado en local): Hacienda 1,2 s, Solana 2 s, pantalla final correcta y el mismo enlace de ejemplo (sal fija confirmada también en producción). Septiembre devuelto a María después.
+- **Prueba de teclado** (N5) en producción: en verde.

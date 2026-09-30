@@ -113,3 +113,7 @@ Next.js 16 · TypeScript · Solana Attestation Service (`sas-lib`, `@solana/kit`
 - Devnet and fictitious data only. One real AEAT sample invoice returns "found", so most of the demo tenant's history is issuer-stated — and labelled as such.
 - The AEAT check reads the Tax Agency's public HTML page; if the page changes, the check reports "unrecognized" instead of guessing (real responses are kept as test fixtures).
 - A single demo issuer. A real network needs issuers with their own SAS credentials (after KYC) and anti-collusion governance — phase 2.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
